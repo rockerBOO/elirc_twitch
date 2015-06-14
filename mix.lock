@@ -1,0 +1,7 @@
+%{"cowboy": {:hex, :cowboy, "1.0.0"},
+  "cowlib": {:hex, :cowlib, "1.0.1"},
+  "dbg": {:git, "git://github.com/fishcakez/dbg.git", "8c3ec3eca04cd07bc9a90a195561c8bbd9e5a639", []},
+  "ether": {:git, "git://github.com/maarek/ether.git", "98e74719d82724e1a9443599bef32d2b1450cb4f", []},
+  "ranch": {:hex, :ranch, "1.0.0"},
+  "socket": {:hex, :socket, "0.2.8"},
+  "timex": {:hex, :timex, "0.12.9"}}
