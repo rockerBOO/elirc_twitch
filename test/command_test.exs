@@ -10,12 +10,4 @@ defmodule CommandTest do
   	assert expected == Command.find_command(@message)
   	assert expected == Command.find_command(@message[:message])
   end
-
-  @response "Hello"
-  test "formatting response for commands" do
-  	expected = "PRIVMSG #rockerboo :Hello\r\n"
-
-  	assert expected == Command.format_response("#rockerboo", @response)
-  end
-
 end

@@ -1,24 +1,29 @@
 defmodule Elirc do
-  use Application
+  use Supervisor
 
-  @host  "irc.twitch.tv"
-  @port  6667
+  def init([state]) do
+    {:ok, state}
+  end
 
+  # See http://elixir-lang.org/docs/stable/elixir/Application.html
+  # for more information on OTP Applications
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    children = [
-      worker(Elirc.NickGenerator, []),
-      supervisor(Elirc.BotSupervisor, [])
+    {:ok, client} = ExIrc.Client.start_link [debug: true]
+
+  	children = [
+      # Define workers and child supervisors to be supervised
+      worker(Elirc.Connection, [client]),
+      # here's where we specify the channels to join:
+      worker(Elirc.Login, [client, ["#rockerboo"]]),
+      worker(Elirc.JoinEvent, [client]),
+      worker(Elirc.Message, [client])
     ]
 
+    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
+    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Elirc.Supervisor]
-
-    {:ok, pid} = Supervisor.start_link(children, opts)
-
-    Elirc.BotSupervisor.run(@host, @port)
-
-    {:ok, pid}
+    Supervisor.start_link(children, opts)
   end
-
 end

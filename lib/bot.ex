@@ -32,7 +32,7 @@ defmodule Elirc.Bot do
   # 
   def parse_message([who, "PRIVMSG", channel | message], _socket) do 
     [":" <> head | tail] = message
-    
+
     message = Enum.join([head | tail], " ")
     message = %{who: parse_sender(who), message: message}
 
