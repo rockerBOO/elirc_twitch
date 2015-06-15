@@ -10,15 +10,16 @@ defmodule Elirc do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    {:ok, client} = ExIrc.Client.start_link [debug: true]
+    # {:ok, client} = ExIrc.Client.start_link [debug: true]
+    {:ok, client} = ExIrc.Client.start_link
 
   	children = [
       # Define workers and child supervisors to be supervised
-      worker(Elirc.Connection, [client]),
+      worker(Elirc.Handler.Connection, [client]),
       # here's where we specify the channels to join:
-      worker(Elirc.Login, [client, ["#rockerboo"]]),
-      worker(Elirc.JoinEvent, [client]),
-      worker(Elirc.Message, [client])
+      worker(Elirc.Handler.Login, [client, ["#rockerboo"]]),
+      worker(Elirc.Handler.Join, [client]),
+      worker(Elirc.Handler.Message, [client])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

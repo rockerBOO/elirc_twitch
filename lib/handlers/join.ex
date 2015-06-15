@@ -1,4 +1,4 @@
-defmodule Elirc.JoinEvent do
+defmodule Elirc.Handler.Join do
   @moduledoc """
   This is an example event handler that greets users when they join a channel
   """

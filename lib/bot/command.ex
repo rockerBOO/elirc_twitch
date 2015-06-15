@@ -1,40 +1,36 @@
 defmodule Elirc.Bot.Command do
-  # %{message: "Hello"}
-  def find_command(%{message: message}) do 
-    message
-      |> parse_command
+  def start_link(client, channel) do
+    GenServer.start_link(__MODULE__, [client, channel])
   end
 
-  # "Hello"
-  def find_command(message) do 
-    message 
-      |> parse_command
+  def init([client, channel]) do
+    state = %{client: client, channel: channel}
+
+    {:ok, state}
   end
 
-  defp is_command(message) do 
-    String.slice(message, 0, 1) == "!"
+  def handle_cast({:process, message}, state) do
+    command = message 
+      |> Elirc.Bot.Command.parse_command()
+      |> Elirc.Bot.Command.run(state)
+
+    {:noreply, state}
   end
 
-  # defp parse_command(<<! :: command>>) do
-  #   %{command: command}
-  # end
-
-  defp parse_command(message) do
-    # Find ! at the start
-    if is_command(message) do
-      # Strip off the !
-      %{command: String.lstrip(message, ?!)}  
-    else
-      %{command: nil}
-    end
-  end 
-
-  def run(%{command: command}, client, chan) do 
-    _run(command, client, chan)
+  # "!hello"
+  def parse_command("!" <> command) do
+    command 
+      |> String.split()
+      |> parse_command_options()
   end
 
-  def run(command, client, chan) do
-    _run(command, client, chan)
+  # Not using the ! prefix, not a command
+  def parse_command(command) do
+    %{command: nil}
+  end
+
+  def parse_command_options([head | tail]) do
+    %{command: head, options: tail}
   end
 
   def play_sound(sound) do
@@ -46,32 +42,46 @@ defmodule Elirc.Bot.Command do
     end
   end
 
-  def play_mp3(file) do 
-    debug "Playing " <> file
+  def play_mp3(file) do
+    {:ok, sound} = Elirc.Sound.start_link(file)
 
-    System.cmd "mpg123", [file]
+    GenServer.cast(sound, {:play, true})
+  end  
+
+  def run(%{command: command}, state) do 
+    _run(command, state)
   end
 
-  defp _run(command, client, chan, options \\ []) do 
-    IO.inspect command
+  def run(command, state) do
+    _run(command, state)
+  end
+
+  defp _run(command, state, options \\ []) do 
+    # IO.inspect command
     case command do 
-      "hello" -> say(client, chan, "Hello")
-      "help" -> say(client, chan, "You need help.")
-      "engage" -> play_sound "engage"
-      "dont" -> play_sound "dont"
-      "speedlimit" -> play_sound "speedlimit"
-      "yeahsure" -> play_sound "yeahsure"
-      "elixir" -> say(client, chan, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications.")
-      "github" -> say(client, chan, "https://github.com/rockerBOO/elirc_twitch")
-      "soundlist" -> say(client, chan, "engage, dont, speedlimit, yeahsure")
-      "whatamidoing" -> say(client, chan, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing.")
+      "hello" -> say("Hello", state)
+      "help" -> say("You need help.", state)
+      "engage" -> play_sound("engage")
+      "dont" -> play_sound("dont")
+      "speedlimit" -> play_sound("speedlimit")
+      "yeahsure" -> play_sound("yeahsure")
+      "elixir" -> say("Elixir is a dynamic, functional language designed for building scalable and maintainable applications.", state)
+      "github" -> say("https://github.com/rockerBOO/elirc_twitch", state)
+      "soundlist" -> say("engage, dont, speedlimit, yeahsure", state)
+      "whatamidoing" -> say("Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing.", state)
       _ -> "Everything is great!"
     end
   end
 
-  def say(client, chan, response) do
-    debug response <> " to " <> chan
-    client |> ExIrc.Client.msg(:privmsg, chan, response)
+  def say(response, state) do
+    debug "Say (#{state.channel}): #{response}"
+    # Don't talk if silent
+    # if state.noisy? do send_say(state, chan, response) end
+    send_say(response, state)
+  end
+
+  def send_say(response, state) do
+    state.client |> ExIrc.Client.msg(:privmsg, state.channel, response)
   end
 
   defp debug(msg) do

@@ -1,40 +1,25 @@
 defmodule Elirc.Message do
-  def start_link(client) do
-    GenServer.start_link(__MODULE__, [client])
+  defmodule State do
+    defstruct channel: "",
+              message: "",
+              client: nil
   end
 
-  def init([client]) do
-    ExIrc.Client.add_handler client, self
-    {:ok, client}
+	def start_link(client, channel, message) do
+    GenServer.start_link(__MODULE__, [client, channel, message])
   end
 
-  def handle_info({:received, message, user, channel}, client) do 
-    debug message
-    debug channel
-    debug user
+  def init([client, channel, message]) do 
+    state = %{client: client, channel: channel, message: message}
 
-    message 
-      |> Elirc.Bot.Command.find_command 
-      |> Elirc.Bot.Command.run client, channel
-    
-    {:noreply, client}
+    process_command(message, channel, client)
+
+    {:ok, state}
   end
 
-  def handle_info(info, state) do
-    IO.inspect info
-    {:noreply, state}
-  end
+  def process_command(message, channel, client) do
+    {:ok, command} = Elirc.Bot.Command.start_link(client, channel)
 
-  def handle_info(info) do
-    IO.inspect info
-  end
-
-  def terminate({stop, reason}, state) do
-    IO.puts "Terminating on #{stop}"
-    # IO.inspect reason
-  end
-
-  defp debug(msg) do
-    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
+    GenServer.cast(command, {:process, message})
   end
 end

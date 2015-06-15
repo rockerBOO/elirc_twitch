@@ -1,11 +1,11 @@
-defmodule Elirc.Connection do
+defmodule Elirc.Handler.Connection do
   defmodule State do
     defstruct host: "irc.twitch.tv",
               port: 6667,
               pass: "",
-              nick: "rockerboo",
-              user: "rockerboo",
-              name: "rockerBOO",
+              nick: "elircbot",
+              user: "elircbot",
+              name: "ElircBot",
               debug?: true,
               client: nil
   end
@@ -25,7 +25,9 @@ defmodule Elirc.Connection do
 
     pass = System.get_env "TWITCH_CHAT_KEY"
 
-    ExIrc.Client.logon state.client, pass, state.nick, state.user, state.name
+    # Login to Twitch IRC 
+    ExIrc.Client.logon state.client, pass, state.nick, 
+      state.user, state.name
 
     {:noreply, state}
   end
@@ -36,10 +38,10 @@ defmodule Elirc.Connection do
     {:noreply, state}
   end
 
-  # Catch-all for messages you don't care about
+  # Catch-all
   def handle_info(msg, state) do
-    debug "Received unknown messsage:"
-    IO.inspect msg
+    # debug "Received unknown messsage:"
+    # IO.inspect msg
     {:noreply, state}
   end
 

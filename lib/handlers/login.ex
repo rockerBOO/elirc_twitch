@@ -1,4 +1,4 @@
-defmodule Elirc.Login do
+defmodule Elirc.Handler.Login do
   @moduledoc """
   This is an example event handler that listens for login events and then
   joins the appropriate channels. We actually need this because we can't
