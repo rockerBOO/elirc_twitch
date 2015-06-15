@@ -23,8 +23,6 @@ defmodule Elirc.Login do
 
   # Catch-all for messages you don't care about
   def handle_info(_msg, state) do
-    debug "I care about the messages!"
-    IO.inspect _msg
     {:noreply, state}
   end
 

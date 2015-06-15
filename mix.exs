@@ -14,7 +14,7 @@ defmodule Elirc.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :dbg, :exirc],
+    [applications: [:logger, :exirc],
      mod: {Elirc.App, []}]
   end
 
@@ -32,8 +32,7 @@ defmodule Elirc.Mixfile do
       {:cowboy, "~> 1.0"},
       {:exirc, "~> 0.9.1"},
       {:timex, "~> 0.12.9"},
-      {:socket, "~> 0.2.8"},
-      {:dbg, github: "fishcakez/dbg"}
+      {:socket, "~> 0.2.8"}
     ]
   end
 end
