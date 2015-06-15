@@ -61,6 +61,10 @@ defmodule Elirc.Bot.Command do
       "dont" -> play_sound "dont"
       "speedlimit" -> play_sound "speedlimit"
       "yeahsure" -> play_sound "yeahsure"
+      "elixir" -> say(client, chan, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications.")
+      "github" -> say(client, chan, "https://github.com/rockerBOO/elirc_twitch")
+      "soundlist" -> say(client, chan, "engage, dont, speedlimit, yeahsure")
+      "whatamidoing" -> say(client, chan, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing.")
       _ -> "Everything is great!"
     end
   end
