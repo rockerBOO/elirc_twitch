@@ -14,16 +14,12 @@ defmodule Elirc.Handler.Message do
     {:noreply, client}
   end
 
-  def handle_info(info, state) do
-    {:noreply, state}
+  # Catch all
+  def handle_info(info, client) do
+    {:noreply, client}
   end
 
-  def terminate({stop, reason}, state) do
-    IO.puts "Terminating on #{stop}"
-    # IO.inspect reason
-  end
-
-  defp debug(msg) do
-    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
+  def terminate(reason, client) do
+    :ok
   end
 end

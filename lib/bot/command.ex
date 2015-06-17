@@ -10,22 +10,25 @@ defmodule Elirc.Bot.Command do
   end
 
   def handle_cast({:process, message}, state) do
-    command = message 
-      |> Elirc.Bot.Command.parse_command()
-      |> Elirc.Bot.Command.run(state)
-
+    process_command(message, state)
     {:noreply, state}
   end
 
+  def process_command(message, state) do 
+    message 
+      |> Elirc.Bot.Command.parse_command()
+      |> Elirc.Bot.Command.run(state)
+  end
+
   # "!hello"
-  def parse_command("!" <> command) do
-    command 
+  def parse_command_from_msg("!" <> msg) do
+    msg 
       |> String.split()
       |> parse_command_options()
   end
 
   # Not using the ! prefix, not a command
-  def parse_command(command) do
+  def parse_command_from_msg(_) do
     %{command: nil}
   end
 
@@ -34,18 +37,14 @@ defmodule Elirc.Bot.Command do
   end
 
   def play_sound(sound) do
-    case sound do 
-      "engage" -> play_mp3 "/home/rockerboo/Music/movie_clips/engag.mp3"
-      "dont" -> play_mp3 "/home/rockerboo/Music/movie_clips/khdont.mp3"
-      "speedlimit" -> play_mp3 "/home/rockerboo/Music/movie_clips/speedlimit.mp3"
-      "yeahsure" -> play_mp3 "/home/rockerboo/Music/movie_clips/yeahsure.mp3"
-    end
-  end
+    {:ok, sound_client} = Elirc.Sound.start_link(%{
+        engage: "/home/rockerboo/Music/movie_clips/engag.mp3",
+        dont: "/home/rockerboo/Music/movie_clips/khdont.mp3",
+        speedlimit: "/home/rockerboo/Music/movie_clips/speedlimit.mp3",
+        yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3"
+      })
 
-  def play_mp3(file) do
-    {:ok, sound} = Elirc.Sound.start_link(file)
-
-    GenServer.cast(sound, {:play, true})
+    GenServer.cast(sound_client, {:play, sound})
   end  
 
   def run(%{command: command}, state) do 
@@ -58,18 +57,27 @@ defmodule Elirc.Bot.Command do
 
   defp _run(command, state, options \\ []) do 
     # IO.inspect command
+    command = parse_command(command)
+
+    case command do
+      {:say, value} -> say(value, state)
+      {:sound, value} -> play_sound(value)
+    end
+  end
+
+  def parse_command(command) do
     case command do 
-      "hello" -> say("Hello", state)
-      "help" -> say("You need help.", state)
-      "engage" -> play_sound("engage")
-      "dont" -> play_sound("dont")
-      "speedlimit" -> play_sound("speedlimit")
-      "yeahsure" -> play_sound("yeahsure")
-      "elixir" -> say("Elixir is a dynamic, functional language designed for building scalable and maintainable applications.", state)
-      "github" -> say("https://github.com/rockerBOO/elirc_twitch", state)
-      "soundlist" -> say("engage, dont, speedlimit, yeahsure", state)
-      "whatamidoing" -> say("Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing.", state)
-      _ -> "Everything is great!"
+      "hello" -> {:say, "Hello"}
+      "help" -> {:say, "You need help."}
+      "engage" -> {:sound, "engage"}
+      "dont" -> {:sound, "dont"}
+      "speedlimit" -> {:sound, "speedlimit"}
+      "yeahsure" -> {:sound, "yeahsure"}
+      "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications."}
+      "github" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
+      "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure"}
+      "whatamidoing" -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
+      _ -> nil
     end
   end
 

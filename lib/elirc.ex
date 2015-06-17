@@ -5,18 +5,15 @@ defmodule Elirc do
     {:ok, state}
   end
 
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+    import Supervisor.Spec
 
-    # {:ok, client} = ExIrc.Client.start_link [debug: true]
     {:ok, client} = ExIrc.Client.start_link
 
   	children = [
-      # Define workers and child supervisors to be supervised
+      # Handles connection actions in IRC
       worker(Elirc.Handler.Connection, [client]),
-      # here's where we specify the channels to join:
+      # Handles Login actions
       worker(Elirc.Handler.Login, [client, ["#rockerboo"]]),
       worker(Elirc.Handler.Join, [client]),
       worker(Elirc.Handler.Message, [client])
