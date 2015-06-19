@@ -8,8 +8,6 @@ defmodule Elirc.MessagePool.Worker do
   end
 
   def handle_call([channel, user, message], _from, client) do
-    IO.inspect self
-
     process_command(message, channel, client)
 
     {:reply, :ok, client}

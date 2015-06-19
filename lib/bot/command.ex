@@ -1,6 +1,6 @@
 defmodule Elirc.Bot.Command do
   def start_link(client, channel) do
-    GenServer.start_link(__MODULE__, [client, channel, noisy?: false])
+    GenServer.start_link(__MODULE__, [client, channel, noisy?: true])
   end
 
   def init([client, channel, noisy?: noisy]) do
@@ -94,6 +94,9 @@ defmodule Elirc.Bot.Command do
 
   def send_say(response, state) do
     IO.puts "Actually sending the message this time"
+    IO.inspect response
+    IO.inspect state
+    
     state.client |> ExIrc.Client.msg(:privmsg, state.channel, response)
   end
 
