@@ -8,10 +8,16 @@ defmodule Elirc.Handler.Message do
     {:ok, client}
   end
 
-  def handle_info({:received, msg, user, channel}, client) do 
-    {:ok, message} = Elirc.Message.start_link client, channel, msg
-    
-    {:noreply, client}
+  def handle_info({:received, msg, user, channel}, state) do 
+    pool_name = Elirc.MessagePool.Supervisor.pool_name()
+
+    :poolboy.transaction(
+      pool_name,
+      fn(pid) -> :gen_server.call(pid, [channel, user, msg]) end,
+      :infinity
+    )
+
+    {:noreply, state}
   end
 
   # Catch all

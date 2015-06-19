@@ -15,11 +15,16 @@ defmodule Elirc do
       worker(Elirc.Handler.Connection, [client]),
       # Handles Login actions
       # worker(Elirc.Handler.Login, [client, ["#rockerboo", "#jonbams", "#lirik", "#itmejp"]]),
-      worker(Elirc.Handler.Login, [client, ["#rockerboo", "#dansgaming"]]),
+      worker(Elirc.Handler.Login, [client, [
+          "#rockerboo", "#dansgaming", "#lirik", "#gronkh", 
+          "#trumpsc", "#adren_tv", "#mushisgosu", "#summit1g",
+          "#sodapoppin", "#resolut1ontv", "#zeeoon", "#lebledart"
+        ]]),
       # worker(Elirc.Handler.Join, [client]),
       worker(Elirc.Handler.Message, [client]),
       worker(Elirc.Handler.Names, [client]),
-      worker(Elirc.Channel.Supervisor, [client])
+      worker(Elirc.Channel.Supervisor, [client]),
+      worker(Elirc.MessagePool.Supervisor, [client])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
