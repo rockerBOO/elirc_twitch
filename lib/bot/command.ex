@@ -1,48 +1,100 @@
 defmodule Elirc.Bot.Command do
-  def find_command(%{message: message}) do 
-    message
-      |> parse_command
+  def start_link(client, channel) do
+    GenServer.start_link(__MODULE__, [client, channel])
   end
 
-  def find_command(message) do 
+  def init([client, channel]) do
+    state = %{client: client, channel: channel}
+
+    {:ok, state}
+  end
+
+  def handle_cast({:process, message}, state) do
+    process_command(message, state)
+    {:noreply, state}
+  end
+
+  def process_command(message, state) do 
     message 
-      |> parse_command
+      |> Elirc.Bot.Command.parse_command_from_msg()
+      |> Elirc.Bot.Command.run(state)
   end
 
-  defp is_command(message) do 
-    String.slice(message, 0, 1) == "!"
+  # "!hello"
+  def parse_command_from_msg("!" <> msg) do
+    msg 
+      |> String.split()
+      |> parse_command_options()
   end
 
-  defp parse_command(message) do
-    # Find ! at the start
-    if is_command(message) do
-      # Strip off the !
-      %{command: String.lstrip(message, ?!)}  
-    else
-      %{command: nil}
+  # Not using the ! prefix, not a command
+  def parse_command_from_msg(_) do
+    %{command: nil}
+  end
+
+  def parse_command_options([head | tail]) do
+    %{command: head, options: tail}
+  end
+
+  def play_sound(sound) do
+    {:ok, sound_client} = Elirc.Sound.start_link(%{
+        engage: "/home/rockerboo/Music/movie_clips/engag.mp3",
+        dont: "/home/rockerboo/Music/movie_clips/khdont.mp3",
+        speedlimit: "/home/rockerboo/Music/movie_clips/speedlimit.mp3",
+        yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3"
+      })
+
+    GenServer.cast(sound_client, {:play, sound})
+  end  
+
+  def run(%{command: command}, state) do 
+    _run(command, state)
+  end
+
+  def run(command, state) do
+    _run(command, state)
+  end
+
+  defp _run(command, state, options \\ []) do 
+
+    # IO.inspect command
+    command = parse_command(command)
+
+    case command do
+      {:say, value} -> say(value, state)
+      {:sound, value} -> play_sound(value)
+      nil -> nil
     end
-  end 
+  end
 
-  def run(%{command: command}, socket, chan) do 
+  def parse_command(command) do
     case command do 
-      "hello" -> say(socket, chan, "Hello")
-      _ -> "Everything is great!"
+      "hello" -> {:say, "Hello"}
+      "help" -> {:say, "You need help."}
+      "engage" -> {:sound, "engage"}
+      "dont" -> {:sound, "dont"}
+      "speedlimit" -> {:sound, "speedlimit"}
+      "yeahsure" -> {:sound, "yeahsure"}
+      "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
+      "github" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
+      "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure"}
+      "whatamidoing" -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
+      _ -> nil
     end
   end
 
-
-  def run(command, socket) do 
-
+  def say(response, state) do
+    debug "Say (#{state.channel}): #{response}"
+    # Don't talk if silent
+    # if state.noisy? do send_say(state, chan, response) end
+    # send_say(response, state)
   end
 
-  def format_response(chan, response) do
-    "PRIVMSG " <> chan <> " :" <> response <> "\r\n"
+  def send_say(response, state) do
+    state.client |> ExIrc.Client.msg(:privmsg, state.channel, response)
   end
 
-  defp say(socket, chan, response) do
-    response = format_response(chan, response)
-
-    socket |> Socket.Stream.send!(response)
+  defp debug(msg) do
+    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
   end
-
 end

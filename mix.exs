@@ -14,7 +14,8 @@ defmodule Elirc.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :dbg]]
+    [applications: [:logger, :exirc],
+     mod: {Elirc.App, []}]
   end
 
   # Dependencies can be Hex packages:
@@ -27,12 +28,12 @@ defmodule Elirc.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [      
+    [
       {:cowboy, "~> 1.0"},
+      # {:exirc, "~> 0.9.1"},
+      {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
       {:timex, "~> 0.12.9"},
-      {:socket, "~> 0.2.8"},
-      {:ether, github: "maarek/ether"},
-      {:dbg, github: "fishcakez/dbg"}
+      {:socket, "~> 0.2.8"}
     ]
   end
 end
