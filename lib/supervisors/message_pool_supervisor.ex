@@ -12,7 +12,7 @@ defmodule Elirc.MessagePool.Supervisor do
 	    ]
 
 	    children = [
-	      :poolboy.child_spec(pool_name(), poolboy_config, [client])
+	      :poolboy.child_spec(pool_name(), poolboy_config, client)
 	    ]
 
 	    options = [

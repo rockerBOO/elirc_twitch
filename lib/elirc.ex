@@ -16,9 +16,9 @@ defmodule Elirc do
       # Handles Login actions
       # worker(Elirc.Handler.Login, [client, ["#rockerboo", "#jonbams", "#lirik", "#itmejp"]]),
       worker(Elirc.Handler.Login, [client, [
-          "#rockerboo", "#dansgaming", "#lirik", "#gronkh", 
-          "#trumpsc", "#adren_tv", "#mushisgosu", "#summit1g",
-          "#sodapoppin", "#resolut1ontv", "#zeeoon", "#lebledart"
+          "#rockerboo", 
+          # "#trumpsc", "#adren_tv", "#mushisgosu", "#summit1g",
+          # "#sodapoppin", "#resolut1ontv", "#zeeoon", "#lebledart"
         ]]),
       # worker(Elirc.Handler.Join, [client]),
       worker(Elirc.Handler.Message, [client]),
