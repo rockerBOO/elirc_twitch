@@ -20,6 +20,9 @@ defmodule Elirc.Handler.Connection do
     {:ok, state}
   end
 
+
+
+
   def handle_info({:connected, server, port}, state) do
     debug "Connected to #{server}:#{port}"
 

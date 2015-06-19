@@ -75,7 +75,7 @@ defmodule Elirc.Bot.Command do
       "dont" -> {:sound, "dont"}
       "speedlimit" -> {:sound, "speedlimit"}
       "yeahsure" -> {:sound, "yeahsure"}
-      "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications."}
+      "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
       "github" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
       "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure"}
       "whatamidoing" -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}

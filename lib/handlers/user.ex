@@ -1,4 +1,4 @@
-defmodule Elirc.Handler.User do 
+defmodule Elirc.Handler.User.OLD do 
   alias Elirc.Users.Supervisor, as: UsersSup
   @moduledoc """
   Handles User joining/parting of the channel
@@ -99,10 +99,14 @@ defmodule Elirc.Handler.User do
   def handle_info({:joined, channel, user}, state) do
     IO.puts "#{user} has joined #{channel}"
 
-    users = state.channel_users[String.to_atom(channel)] 
-      |> GenServer.call({:add, user})
+    # {channel, pid} = state.channel_users[{String.to_atom(channel), pid}] 
 
-    {:noreply, %{state | users: users}}
+    # users = pid
+    #   |> GenServer.call({:add, user})
+
+    # IO.inspect users
+
+    {:noreply, state}
   end
 
   def handle_info({:parted, channel, user}, state) do

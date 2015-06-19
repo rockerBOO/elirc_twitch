@@ -3,7 +3,7 @@ defmodule Elirc.Channel.Users do
   alias Elirc.BucketList
 
   def start_link(exirc_client) do
-    GenServer.start_link(__MODULE__, [exirc_client])
+    # GenServer.start_link(__MODULE__, [exirc_client])
   end
 
   def init([client]) do
