@@ -1,10 +1,10 @@
 defmodule Elirc.Bot.Command do
   def start_link(client, channel) do
-    GenServer.start_link(__MODULE__, [client, channel])
+    GenServer.start_link(__MODULE__, [client, channel, noisy?: false])
   end
 
-  def init([client, channel]) do
-    state = %{client: client, channel: channel}
+  def init([client, channel, noisy?: noisy]) do
+    state = %{client: client, channel: channel, noisy?: noisy}
 
     {:ok, state}
   end
@@ -86,11 +86,14 @@ defmodule Elirc.Bot.Command do
   def say(response, state) do
     debug "Say (#{state.channel}): #{response}"
     # Don't talk if silent
-    # if state.noisy? do send_say(state, chan, response) end
+    IO.inspect state
+
+    if state.noisy? do send_say(response, state) end
     # send_say(response, state)
   end
 
   def send_say(response, state) do
+    IO.puts "Actually sending the message this time"
     state.client |> ExIrc.Client.msg(:privmsg, state.channel, response)
   end
 
