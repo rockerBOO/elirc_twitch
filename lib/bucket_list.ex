@@ -1,76 +1,92 @@
-# defmodule Elirc.BucketList do
-#   def start_link(bucket, key) do
-#     GenServer.start_link(__MODULE__, [bucket, key])
-#   end
+defmodule Elirc.BucketList do
+  def new(bucket) do
+    :ets.new(String.to_atom(bucket), [
+      :ordered_set,
+      :named_table,
+      :public,
+      {:read_concurrency, true}
+    ])
+  end
 
-#   def init([bucket, key]) do
-#     new(bucket)
+  def terminate(reason, state) do
+    delete(state.bucket)
+    :ok
+  end
 
-#     {:ok, [bucket, key]}
-#   end
+  def handle_info({ :DOWN, _ref, :process, pid, _reason }, state) do
+    # :ets.match_delete(state.bucket, { :_, pid })
+    { :noreply, state }
+  end
 
-#   def new(bucket) do
-#     :ets.new(bucket, [
-#       :set,
-#       :named_table,
-#       :public,
-#       :read_concurrency
-#     ])
-#   end
+  def handle_call(:add, {[_] = values}, state) do
+    add_many(values, state.bucket)
 
-#   def terminate(reason, state) do
-#     delete(state.bucket)
-#     :ok
-#   end
+    :ok
+  end
 
-#   def handle_call(:add, {value}, state) do
-#     add(state.bucket, state.key, value)
+  def add_many([values], bucket) do
+    values 
+      |> Enum.each(fn (value) 
+        -> add(value, bucket) end)
+  end
 
-#     {:reply, :ok, state}
-#   end
+  def handle_call(:add, {value}, state) do
+    add(value, state.bucket)
 
-#   def handle_call(:remove, {value}, state) do
-#     remove(value, state.bucket, state.key)
+    {:reply, :ok, state}
+  end
 
-#     {:reply, :ok, state}
-#   end
+  def handle_call(:remove, {value}, state) do
+    remove(value, state.bucket)
 
-#   # add value to list
-#   def add(value, bucket, key) do
-#     results = get(bucket, key)
+    {:reply, :ok, state}
+  end
 
-#     IO.inspect results
+  def hash_value(value) do
+    # Hashing with md5, possible mis-match on keys
+    :crypto.hash(:md5, value)
+      |> Base.encode16
+  end
 
-#     results = Enum.into(results, value)
+  def add(value, bucket) do
+    {hash_value(value), value}
+      |> put(bucket)
+  end
 
-#     put(bucket, {key, results})
-#   end
+  def remove(value, bucket) do 
+    delete(hash_value(value), bucket)
+  end
 
-#   # remove value from list
-#   def remove(value, bucket, key) do
-#     results = get(bucket, key)
+  def get(value, bucket) do 
+    lookup(hash_value(value), bucket)
+  end
 
-#     # remove value from list
-#     results = Enum.filter(results, fn(x) -> x != value end)
+  def get_all(bucket) do
+    debug "Get all results from ", bucket
+    :ets.match(bucket, :"$1")
+  end
 
-#     put_result = put(bucket, {key, results})
+  # ETS 
+  def lookup(value, bucket) do
+    :ets.lookup(bucket, value)
+  end
 
-#     {:ok, results}
-#   end
+  def put({key, value}, bucket) do
+    debug "Inserting {#{key}, #{value}} to bucket ", bucket
+    :ets.insert(bucket, {key, value})
+  end
 
-#   def get(bucket, key) do
-#     :ets.lookup(bucket, key)
-#   end
+  def delete(key, bucket) do
+    debug "Deleting #{key} from bucket ", bucket
+    :ets.delete(bucket, key)
+  end
 
-#   def put(bucket, {key, value}) do
-#     :ets.insert(bucket, {key, value})
-#   end
+  def delete(bucket) do
+    debug "Deleting entire bucket ", bucket
+    :ets.delete(bucket)
+  end
 
-#   def delete(bucket, key) do
-#     :ets.delete(bucket, key)
-#   end
-
-#   def delete(bucket) do
-#     :ets.delete(bucket)
-#   end
-# end
+  def debug(msg, bucket) do
+    IO.puts msg <> Atom.to_string(bucket)
+  end
+end
