@@ -1,6 +1,8 @@
 Elirc
 =====
 
+In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
+
 Requires Elixir 
 
 Set the twitch chat key to the environment variables
