@@ -28,9 +28,10 @@ defmodule Elirc.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [      
+    [
       {:cowboy, "~> 1.0"},
-      {:exirc, "~> 0.9.1"},
+      # {:exirc, "~> 0.9.1"},
+      {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
       {:timex, "~> 0.12.9"},
       {:socket, "~> 0.2.8"}
     ]

@@ -1,17 +1,7 @@
 defmodule Elirc.BucketList do
-  def start_link(bucket, key) do
-    GenServer.start_link(__MODULE__, [bucket, key])
-  end
-
-  def init([bucket, key]) do
-    new(bucket)
-
-    {:ok, [bucket, key]}
-  end
-
   def new(bucket) do
-    :ets.new(bucket, [
-      :set,
+    :ets.new(String.to_atom(bucket), [
+      :ordered_set,
       :named_table,
       :public,
       {:read_concurrency, true}
@@ -28,6 +18,17 @@ defmodule Elirc.BucketList do
     { :noreply, state }
   end
 
+  def handle_call(:add, {[_] = values}, state) do
+    add_many(values, state.bucket)
+
+    :ok
+  end
+
+  def add_many([values], bucket) do
+    values 
+      |> Enum.each(fn (value) 
+        -> add(value, bucket) end)
+  end
 
   def handle_call(:add, {value}, state) do
     add(value, state.bucket)
@@ -44,6 +45,7 @@ defmodule Elirc.BucketList do
   def hash_value(value) do
     # Hashing with md5, possible mis-match on keys
     :crypto.hash(:md5, value)
+      |> Base.encode16
   end
 
   def add(value, bucket) do
@@ -59,20 +61,32 @@ defmodule Elirc.BucketList do
     lookup(hash_value(value), bucket)
   end
 
+  def get_all(bucket) do
+    debug "Get all results from ", bucket
+    :ets.match(bucket, :"$1")
+  end
+
   # ETS 
   def lookup(value, bucket) do
     :ets.lookup(bucket, value)
   end
 
   def put({key, value}, bucket) do
+    debug "Inserting {#{key}, #{value}} to bucket ", bucket
     :ets.insert(bucket, {key, value})
   end
 
   def delete(key, bucket) do
+    debug "Deleting #{key} from bucket ", bucket
     :ets.delete(bucket, key)
   end
 
   def delete(bucket) do
+    debug "Deleting entire bucket ", bucket
     :ets.delete(bucket)
+  end
+
+  def debug(msg, bucket) do
+    IO.puts msg <> Atom.to_string(bucket)
   end
 end

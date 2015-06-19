@@ -12,6 +12,10 @@ defmodule Elirc.Handler.Login do
 
   def handle_info(:logged_in, state = {client, channels}) do
     debug "Logged in to server"
+
+    x = ExIrc.Client.cmd(client, ['CAP REQ :twitch.tv/membership'])
+    x = ExIrc.Client.cmd(client, ['CAP REQ :twitch.tv/commands'])
+
     channels |> Enum.map(&ExIrc.Client.join client, &1)
     {:noreply, state}
   end

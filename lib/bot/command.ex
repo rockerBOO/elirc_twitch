@@ -16,7 +16,7 @@ defmodule Elirc.Bot.Command do
 
   def process_command(message, state) do 
     message 
-      |> Elirc.Bot.Command.parse_command()
+      |> Elirc.Bot.Command.parse_command_from_msg()
       |> Elirc.Bot.Command.run(state)
   end
 
@@ -56,12 +56,14 @@ defmodule Elirc.Bot.Command do
   end
 
   defp _run(command, state, options \\ []) do 
+
     # IO.inspect command
     command = parse_command(command)
 
     case command do
       {:say, value} -> say(value, state)
       {:sound, value} -> play_sound(value)
+      nil -> nil
     end
   end
 
@@ -85,7 +87,7 @@ defmodule Elirc.Bot.Command do
     debug "Say (#{state.channel}): #{response}"
     # Don't talk if silent
     # if state.noisy? do send_say(state, chan, response) end
-    send_say(response, state)
+    # send_say(response, state)
   end
 
   def send_say(response, state) do
