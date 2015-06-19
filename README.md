@@ -14,4 +14,4 @@ Currently runs in iex
 	iex -S mix
 
 
-![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.jpg)
+![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.png)
