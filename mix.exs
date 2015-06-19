@@ -30,6 +30,7 @@ defmodule Elirc.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 1.0"},
+      {:poolboy, github: "devinus/poolboy"},
       # {:exirc, "~> 0.9.1"},
       {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
       {:timex, "~> 0.12.9"},
