@@ -6,6 +6,8 @@ defmodule Elirc.Bot.Command do
   def init([client, channel, noisy?: noisy]) do
     state = %{client: client, channel: channel, noisy?: noisy}
 
+    :random.seed(:erlang.now)
+
     {:ok, state}
   end
 
@@ -63,6 +65,8 @@ defmodule Elirc.Bot.Command do
     case command do
       {:say, value} -> say(value, state)
       {:sound, value} -> play_sound(value)
+      {:cmd, value} -> cmd(value, state)
+      # nil -> say_random_emote(state)
       nil -> nil
     end
   end
@@ -75,29 +79,63 @@ defmodule Elirc.Bot.Command do
       "dont" -> {:sound, "dont"}
       "speedlimit" -> {:sound, "speedlimit"}
       "yeahsure" -> {:sound, "yeahsure"}
+      "follower" -> {:cmd, "follower"}
       "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
-      "github" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
+      "bot" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
+      "elirc" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
       "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure"}
       "whatamidoing" -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
+      "itsnotaboutsyntax" -> {:say, "http://devintorr.es/blog/2013/06/11/elixir-its-not-about-syntax/"}
+      "excitement" -> {:say, "http://devintorr.es/blog/2013/01/22/the-excitement-of-elixir/"}
+      "commands" -> {:say, "!(hello, elixir, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement)"}
+      "twitchapi" -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
+      "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
       _ -> nil
     end
   end
 
   def say(response, state) do
     debug "Say (#{state.channel}): #{response}"
-    # Don't talk if silent
-    IO.inspect state
 
     if state.noisy? do send_say(response, state) end
     # send_say(response, state)
   end
 
+  def say_random_emote(state) do
+    emotes = [
+      "Kreygasm", "FrankerZ", "OMGScoots",
+      "FailFish", "WutFace"
+    ]
+
+    Enum.at(emotes, :random.uniform(length(emotes)) - 1)
+      |> send_say(state)
+  end
+
   def send_say(response, state) do
-    IO.puts "Actually sending the message this time"
-    IO.inspect response
-    IO.inspect state
-    
     state.client |> ExIrc.Client.msg(:privmsg, state.channel, response)
+  end
+
+  def cmd(value, state) do
+    case value do
+      "follower" -> say(get_last_follower(), state)
+      _ -> IO.inspect value
+    end
+  end
+
+  @doc """
+  Gets the last follower to the channel
+
+  ## Examples
+      iex> Elirc.Bot.Command.get_last_follower()
+  """
+  def get_last_follower() do 
+    opts = %{"direction" => "desc", "limit" => 1}
+    %RestTwitch.Follows.Follow{user: user} = 
+      RestTwitch.Channels.followers("rockerboo", opts)
+      |> Enum.fetch! 0
+
+    user 
+      |> Map.fetch! "display_name"
   end
 
   defp debug(msg) do

@@ -8,6 +8,7 @@ defmodule Elirc do
   def start(_type, _args) do
     import Supervisor.Spec
 
+    {:ok, rest_client} = RestTwitch.Request.start
     {:ok, client} = ExIrc.Client.start_link [debug: true]
 
   	children = [
