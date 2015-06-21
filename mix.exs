@@ -33,6 +33,7 @@ defmodule Elirc.Mixfile do
       {:poolboy, github: "devinus/poolboy"},
       # {:exirc, "~> 0.9.1"},
       {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
+      {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
       {:timex, "~> 0.12.9"},
       {:socket, "~> 0.2.8"}
     ]
