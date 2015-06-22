@@ -3,11 +3,11 @@ Elirc
 
 In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
 
-Requires Elixir 
+Requires Elixir
 
 Set the twitch chat key to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/).
 
-	export TWITCH_CHAT_KEY=oauth:...
+	export TWITCH_ACCESS_TOKEN=...
 
 Currently runs in iex
 
