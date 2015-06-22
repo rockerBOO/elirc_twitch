@@ -93,7 +93,7 @@ defmodule Elirc.Bot.Command do
       "commands" -> {:say, "!(hello, elixir, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement)"}
       "twitchapi" -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
       "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
-      "gravity" -> {:say, "https://github.com/frankyonnetti/gravity-sublime-theme"}
+      "theme" -> {:say, "http://glaciertheme.com/"}
       "flip" -> {:say , "(╯°□°）╯︵┻━┻"}
       _ -> nil
     end
