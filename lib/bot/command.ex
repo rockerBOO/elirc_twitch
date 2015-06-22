@@ -1,10 +1,10 @@
 defmodule Elirc.Bot.Command do
-  def start_link(client, channel) do
-    GenServer.start_link(__MODULE__, [client, channel, noisy?: true])
+  def start_link(client, token, channel) do
+    GenServer.start_link(__MODULE__, [client, token, channel, noisy?: true])
   end
 
-  def init([client, channel, noisy?: noisy]) do
-    state = %{client: client, channel: channel, noisy?: noisy}
+  def init([client, token, channel, noisy?: noisy]) do
+    state = %{client: client, token: token, channel: channel, noisy?: noisy}
 
     :random.seed(:erlang.now)
 
@@ -43,7 +43,13 @@ defmodule Elirc.Bot.Command do
         engage: "/home/rockerboo/Music/movie_clips/engag.mp3",
         dont: "/home/rockerboo/Music/movie_clips/khdont.mp3",
         speedlimit: "/home/rockerboo/Music/movie_clips/speedlimit.mp3",
-        yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3"
+        yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3",
+        xfiles: "/home/rockerboo/Music/movie_clips/xfiles.mp3",
+        wedidit: "/home/rockerboo/Music/movie_clips/wedidit.mp3",
+        toy: "/home/rockerboo/Music/movie_clips/toy.mp3",
+        waitthere: "/home/rockerboo/Music/movie_clips/waithere.mp3",
+        bealright: "/home/rockerboo/Music/movie_clips/bealright.mp3",
+        whatsthat: "/home/rockerboo/Music/movie_clips/whatsthat.mp3"
       })
 
     GenServer.cast(sound_client, {:play, sound})
@@ -81,19 +87,26 @@ defmodule Elirc.Bot.Command do
       "dont" -> {:sound, "dont"}
       "speedlimit" -> {:sound, "speedlimit"}
       "yeahsure" -> {:sound, "yeahsure"}
+      "xfiles" -> {:sound, "xfiles"}
+      "wedidit" -> {:sound, "wedidit"}
+      "toy" -> {:sound, "toy"}
+      "waitthere" -> {:sound, "waitthere"}
+      "bealright" -> {:sound, "bealright"}
+      "whatsthat" -> {:sound, "whatsthat"}
       "follower" -> {:cmd, "follower"}
       "followed" -> {:cmd, "followed"}
       "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
       "bot" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
       "elirc" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
-      "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure"}
+      "soundlist" -> {:say, "engage, dont, speedlimit, yeahsure, xfiles, wedidit, toy, waitthere, bealright, whatsthat"}
       "whatamidoing" -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
       "itsnotaboutsyntax" -> {:say, "http://devintorr.es/blog/2013/06/11/elixir-its-not-about-syntax/"}
       "excitement" -> {:say, "http://devintorr.es/blog/2013/01/22/the-excitement-of-elixir/"}
       "commands" -> {:say, "!(hello, elixir, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement)"}
       "twitchapi" -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
       "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
-      "gravity" -> {:say, "https://github.com/frankyonnetti/gravity-sublime-theme"}
+      "glacier" -> {:say, "http://glaciertheme.com/"}
+      "theme" -> {:say, "http://glaciertheme.com/"}
       _ -> nil
     end
   end
@@ -122,7 +135,7 @@ defmodule Elirc.Bot.Command do
   def cmd(value, state) do
     case value do
       "follower" -> say(get_last_follower(), state)
-      "followed" -> say(get_last_followed(), state)
+      "followed" -> say(get_last_followed(state.token), state)
       _ -> IO.inspect value
     end
   end
@@ -143,18 +156,12 @@ defmodule Elirc.Bot.Command do
       |> Map.fetch! "display_name"
   end
 
-  def get_last_followed() do
-    # /streams/followed
-    token = OAuth2.AccessToken.new(%{
-      "token_type" => "OAuth ", 
-      "access_token" => System.get_env("TWITCH_ACCESS_TOKEN")
-    }, OAuth2.Twitch.new())
-
+  def get_last_followed(token) do
     %{"display_name" => display_name} = 
-      RestTwitch.Users.streams_following(token, %{"limit" => 1})
-      |> Map.fetch!("streams")
+      RestTwitch.Users.streams_following(token, [limit: 1])
+      # |> Map.fetch!("streams")
       |> Enum.fetch!(0)
-      |> Map.fetch!("channel")
+      |> Map.fetch!(:channel)
 
     display_name 
   end

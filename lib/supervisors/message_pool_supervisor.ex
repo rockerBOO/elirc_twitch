@@ -1,9 +1,9 @@
 defmodule Elirc.MessagePool.Supervisor do
-  def start_link(client) do
-    GenServer.start_link(__MODULE__, [client])
+  def start_link(client, token) do
+    GenServer.start_link(__MODULE__, [client, token])
   end
 
-  def init([client]) do
+  def init([client, token]) do
 	    poolboy_config = [
 	      {:name, {:local, pool_name()}},
 	      {:worker_module, Elirc.MessagePool.Worker},
@@ -12,7 +12,7 @@ defmodule Elirc.MessagePool.Supervisor do
 	    ]
 
 	    children = [
-	      :poolboy.child_spec(pool_name(), poolboy_config, client)
+	      :poolboy.child_spec(pool_name(), poolboy_config, [client, token])
 	    ]
 
 	    options = [

@@ -9,6 +9,11 @@ defmodule Elirc do
     import Supervisor.Spec
 
     {:ok, rest_client} = RestTwitch.Request.start
+    {:ok, token_rest_client} = RestTwitch.TokenRequest.start
+
+    # Twitch OAuth2 Access Token
+    token = System.get_env("TWITCH_ACCESS_TOKEN")
+
     {:ok, client} = ExIrc.Client.start_link [debug: true]
 
   	children = [
@@ -22,10 +27,10 @@ defmodule Elirc do
           # "#sodapoppin", "#resolut1ontv", "#zeeoon", "#lebledart"
         ]]),
       # worker(Elirc.Handler.Join, [client]),
-      worker(Elirc.Handler.Message, [client]),
+      worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Channel.Supervisor, [client]),
-      worker(Elirc.MessagePool.Supervisor, [client])
+      worker(Elirc.MessagePool.Supervisor, [client, token])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
