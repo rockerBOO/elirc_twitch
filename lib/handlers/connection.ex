@@ -23,10 +23,13 @@ defmodule Elirc.Handler.Connection do
   def handle_info({:connected, server, port}, state) do
     debug "Connected to #{server}:#{port}"
 
-    pass = System.get_env "TWITCH_CHAT_KEY"
+    # pass = System.get_env "TWITCH_CHAT_KEY"
+    pass = System.get_env "TWITCH_ACCESS_TOKEN"
+
+    IO.puts byte_size(pass)
 
     # Login to Twitch IRC 
-    ExIrc.Client.logon state.client, pass, state.nick, 
+    ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick, 
       state.user, state.name
 
     {:noreply, state}
