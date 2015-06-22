@@ -167,8 +167,8 @@ defmodule Elirc.Bot.Command do
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         last_track  = Exml.parse(body) |> Exml.get "//item[1]/title"
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        IO.puts "Not found :("
+      {:ok, response} ->
+        IO.inspect response
       {:error, %HTTPoison.Error{reason: reason}} ->
         IO.inspect reason
     end
