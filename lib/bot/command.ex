@@ -94,6 +94,7 @@ defmodule Elirc.Bot.Command do
       "twitchapi" -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
       "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
       "gravity" -> {:say, "https://github.com/frankyonnetti/gravity-sublime-theme"}
+      "flip" -> {:say , "(╯°□°）╯︵┻━┻"}
       _ -> nil
     end
   end
