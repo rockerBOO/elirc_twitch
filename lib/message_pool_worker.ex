@@ -1,20 +1,20 @@
 defmodule Elirc.MessagePool.Worker do
-  def start_link(client) do
-    GenServer.start_link(__MODULE__, client, [])
+  def start_link([client, token]) do
+    GenServer.start_link(__MODULE__, [client, token], [])
   end
 
-  def init(client) do
-    {:ok, client}
+  def init([client, token]) do
+    {:ok, [client, token]}
   end
 
-  def handle_call([channel, user, message], _from, client) do
-    process_command(message, channel, client)
+  def handle_call([channel, user, message], _from, state) do
+    process_command(message, channel, state)
 
-    {:reply, :ok, client}
+    {:reply, :ok, state}
   end
 
-  def process_command(message, channel, client) do
-    {:ok, command} = Elirc.Bot.Command.start_link(client, channel)
+  def process_command(message, channel, state = [client, token]) do
+    {:ok, command} = Elirc.Bot.Command.start_link(client, token, channel)
 
     GenServer.cast(command, {:process, message})
   end

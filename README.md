@@ -5,9 +5,11 @@ In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adve
 
 Requires Elixir
 
+
+
 Set the twitch chat key to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/).
 
-	export TWITCH_ACCESS_TOKEN=...
+	export TWITCH_ACCESS_TOKEN=dybd4z...
 
 Currently runs in iex
 

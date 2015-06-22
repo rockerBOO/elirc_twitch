@@ -1,11 +1,11 @@
 defmodule Elirc.Handler.Message do
-  def start_link(client) do
-    GenServer.start_link(__MODULE__, [client])
+  def start_link(client, token) do
+    GenServer.start_link(__MODULE__, [client, token])
   end
 
-  def init([client]) do
+  def init([client, token]) do
     ExIrc.Client.add_handler client, self
-    {:ok, client}
+    {:ok, %{client: client, token: token}}
   end
 
   def handle_info({:received, msg, user, channel}, state) do 
@@ -21,11 +21,11 @@ defmodule Elirc.Handler.Message do
   end
 
   # Catch all
-  def handle_info(info, client) do
-    {:noreply, client}
+  def handle_info(info, state) do
+    {:noreply, state}
   end
 
-  def terminate(reason, client) do
+  def terminate(reason, state) do
     :ok
   end
 end
