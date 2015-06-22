@@ -49,10 +49,12 @@ defmodule Elirc.Bot.Command do
     GenServer.cast(sound_client, {:play, sound})
   end  
 
+  # %{command: "!hello"}
   def run(%{command: command}, state) do 
     _run(command, state)
   end
 
+  # !hello
   def run(command, state) do
     _run(command, state)
   end
@@ -80,6 +82,7 @@ defmodule Elirc.Bot.Command do
       "speedlimit" -> {:sound, "speedlimit"}
       "yeahsure" -> {:sound, "yeahsure"}
       "follower" -> {:cmd, "follower"}
+      "followed" -> {:cmd, "followed"}
       "elixir" -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
       "bot" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
       "elirc" -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
@@ -90,6 +93,7 @@ defmodule Elirc.Bot.Command do
       "commands" -> {:say, "!(hello, elixir, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement)"}
       "twitchapi" -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
       "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
+      "gravity" -> {:say, "https://github.com/frankyonnetti/gravity-sublime-theme"}
       _ -> nil
     end
   end
@@ -118,6 +122,7 @@ defmodule Elirc.Bot.Command do
   def cmd(value, state) do
     case value do
       "follower" -> say(get_last_follower(), state)
+      "followed" -> say(get_last_followed(), state)
       _ -> IO.inspect value
     end
   end
@@ -136,6 +141,22 @@ defmodule Elirc.Bot.Command do
 
     user 
       |> Map.fetch! "display_name"
+  end
+
+  def get_last_followed() do
+    # /streams/followed
+    token = OAuth2.AccessToken.new(%{
+      "token_type" => "OAuth ", 
+      "access_token" => System.get_env("TWITCH_ACCESS_TOKEN")
+    }, OAuth2.Twitch.new())
+
+    %{"display_name" => display_name} = 
+      RestTwitch.Users.streams_following(token, %{"limit" => 1})
+      |> Map.fetch!("streams")
+      |> Enum.fetch!(0)
+      |> Map.fetch!("channel")
+
+    display_name 
   end
 
   defp debug(msg) do
