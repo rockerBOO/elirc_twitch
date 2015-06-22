@@ -107,6 +107,8 @@ defmodule Elirc.Bot.Command do
       "resttwitch" -> {:say, "https://github.com/rockerBOO/rest_twitch"}
       "glacier" -> {:say, "http://glaciertheme.com/"}
       "theme" -> {:say, "http://glaciertheme.com/"}
+      "flip" -> {:say , "(╯°□°）╯︵┻━┻"}
+      "song" -> {:cmd, "song"}
       _ -> nil
     end
   end
@@ -136,6 +138,8 @@ defmodule Elirc.Bot.Command do
     case value do
       "follower" -> say(get_last_follower(), state)
       "followed" -> say(get_last_followed(state.token), state)
+      "song" -> say(get_last_track(), state)
+
       _ -> IO.inspect value
     end
   end
@@ -164,6 +168,19 @@ defmodule Elirc.Bot.Command do
       |> Map.fetch!(:channel)
 
     display_name 
+  end
+
+  def get_last_track() do
+    url = "http://ws.audioscrobbler.com/1.0/user/rockerboo/recenttracks.rss"
+    case HTTPoison.get(url) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        last_track  = Exml.parse(body) |> Exml.get "//item[1]/title"
+      {:ok, response} ->
+        IO.inspect response
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.inspect reason
+    end
+    last_track
   end
 
   defp debug(msg) do

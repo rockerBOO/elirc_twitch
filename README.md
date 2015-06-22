@@ -3,7 +3,7 @@ Elirc
 
 In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
 
-Requires Elixir 
+Requires Elixir
 
 
 
