@@ -139,7 +139,6 @@ defmodule Elirc.Bot.Command do
       "follower" -> say(get_last_follower(), state)
       "followed" -> say(get_last_followed(state.token), state)
       "song" -> say(get_last_track(), state)
-
       _ -> IO.inspect value
     end
   end
