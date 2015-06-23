@@ -16,15 +16,15 @@ defmodule Elirc.Bot.Command do
     {:noreply, state}
   end
 
-  def process_command(message, state) do 
-    message 
+  def process_command(message, state) do
+    message
       |> Elirc.Bot.Command.parse_command_from_msg()
       |> Elirc.Bot.Command.run(state)
   end
 
   # "!hello"
   def parse_command_from_msg("!" <> msg) do
-    msg 
+    msg
       |> String.split()
       |> parse_command_options()
   end
@@ -53,10 +53,10 @@ defmodule Elirc.Bot.Command do
       })
 
     GenServer.cast(sound_client, {:play, sound})
-  end  
+  end
 
   # %{command: "!hello"}
-  def run(%{command: command}, state) do 
+  def run(%{command: command}, state) do
     _run(command, state)
   end
 
@@ -65,7 +65,7 @@ defmodule Elirc.Bot.Command do
     _run(command, state)
   end
 
-  defp _run(command, state, options \\ []) do 
+  defp _run(command, state, options \\ []) do
 
     # IO.inspect command
     command = parse_command(command)
@@ -80,7 +80,7 @@ defmodule Elirc.Bot.Command do
   end
 
   def parse_command(command) do
-    case command do 
+    case command do
       "hello" -> {:say, "Hello"}
       "help" -> {:say, "You need help."}
       "engage" -> {:sound, "engage"}
@@ -149,24 +149,24 @@ defmodule Elirc.Bot.Command do
   ## Examples
       iex> Elirc.Bot.Command.get_last_follower()
   """
-  def get_last_follower() do 
-    opts = %{"direction" => "desc", "limit" => 1}
-    %RestTwitch.Follows.Follow{user: user} = 
+  def get_last_follower() do
+    opts = [direction: "desc", limit: 1]
+    %RestTwitch.Follows.Follow{user: user} =
       RestTwitch.Channels.followers("rockerboo", opts)
       |> Enum.fetch! 0
 
-    user 
+    user
       |> Map.fetch! "display_name"
   end
 
   def get_last_followed(token) do
-    %{"display_name" => display_name} = 
+    %{"display_name" => display_name} =
       RestTwitch.Users.streams_following(token, [limit: 1])
       # |> Map.fetch!("streams")
       |> Enum.fetch!(0)
       |> Map.fetch!(:channel)
 
-    display_name 
+    display_name
   end
 
   def get_last_track() do
@@ -180,6 +180,12 @@ defmodule Elirc.Bot.Command do
         IO.inspect reason
     end
     last_track
+  end
+
+  def terminate(reason, state) do
+    IO.inspect reason
+
+    :ok
   end
 
   defp debug(msg) do

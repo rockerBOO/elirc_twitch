@@ -26,8 +26,8 @@ defmodule Elirc.Handler.Connection do
     # pass = System.get_env "TWITCH_CHAT_KEY"
     pass = System.get_env "TWITCH_ACCESS_TOKEN"
 
-    # Login to Twitch IRC 
-    ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick, 
+    # Login to Twitch IRC
+    ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick,
       state.user, state.name
 
     {:noreply, state}
