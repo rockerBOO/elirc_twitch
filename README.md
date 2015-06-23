@@ -5,18 +5,43 @@ In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adve
 
 Requires Elixir
 
+## Configuration
 
 
-Set the twitch chat key to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/).
+You will need to set the following configuration variables in your
+`config/config.exs` file:
 
-	export TWITCH_ACCESS_TOKEN=dybd4z...
+```elixir
+use Mix.Config
+
+config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
+                   username:  System.get_env("TWITCH_USERNAME")
+```
+
+Set the twitch access token to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/).
+
+For security, I recommend that you use environment variables rather than hard
+coding your account credentials. If you don't already have an environment
+variable manager, you can create a `.env` file in your project with the
+following content:
+
+```bash
+export TWITCH_ACCESS_TOKEN=dybd4z...
+export TWITCH_USERNAME=your_username
+```
+
+Then, just be sure to run `source .env` in your shell before compiling your
+project.
+
+Channels are currently set in `lib/elirc.ex`. `worker(Elirc.Handler.Login, [client, ["#dansgaming"]]),
+
+## Usage
 
 Currently runs in iex
 
 	iex -S mix
 
 
-Channels are currently set in `lib/elirc.ex`. `worker(Elirc.Handler.Login, [client, ["#dansgaming"]]),
-
+## Proces flow
 
 ![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.png)
