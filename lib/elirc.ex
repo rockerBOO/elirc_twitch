@@ -35,14 +35,16 @@ defmodule Elirc do
       worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Channel.Supervisor, [client]),
-      worker(Elirc.MessagePool.Supervisor, [client, token])
+      worker(Elirc.MessagePool.Supervisor, [client, token]),
+      worker(Elirc.CommandPool.Supervisor, [client, token]),
+      worker(Elirc.SoundPool.Supervisor, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Elirc.Supervisor]
+
     Supervisor.start_link(children, opts)
-    # supervisor(children, opts)
   end
 
   def terminate(reason, state) do

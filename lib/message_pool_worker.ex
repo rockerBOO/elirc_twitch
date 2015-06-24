@@ -9,8 +9,10 @@ defmodule Elirc.MessagePool.Worker do
     {:ok, %{client: client, token: token}}
   end
 
-  def handle_call([channel, user, message], _from, state) do
-    {:reply, process(message, channel, state), state}
+  def handle_cast([channel, user, message], state) do
+    process(message, channel, state)
+
+    {:noreply, state}
   end
 
   def process(message, channel, state) do
@@ -45,33 +47,23 @@ defmodule Elirc.MessagePool.Worker do
   end
 
   def play_sound(sound, channel, state) do
-    {:ok, sound_client} = Elirc.Sound.start_link(%{
-        engage: "/home/rockerboo/Music/movie_clips/engag.mp3",
-        dont: "/home/rockerboo/Music/movie_clips/khdont.mp3",
-        speedlimit: "/home/rockerboo/Music/movie_clips/speedlimit.mp3",
-        yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3",
-        xfiles: "/home/rockerboo/Music/movie_clips/xfiles.mp3",
-        wedidit: "/home/rockerboo/Music/movie_clips/wedidit.mp3",
-        toy: "/home/rockerboo/Music/movie_clips/toy.mp3",
-        waitthere: "/home/rockerboo/Music/movie_clips/waithere.mp3",
-        bealright: "/home/rockerboo/Music/movie_clips/bealright.mp3",
-        whatsthat: "/home/rockerboo/Music/movie_clips/whatsthat.mp3",
-        injuriesemotional: "/home/rockerboo/Music/movie_clips/injuriesemotional.mp3",
-        getsmeeverytime: "/home/rockerboo/Music/movie_clips/getsmeeverytime.mp3",
-        talkingabout: "/home/rockerboo/Music/movie_clips/talkingabout.mp3",
-        awkward: "/home/rockerboo/Music/movie_clips/awkward.mp3",
-        beat_it: "/home/rockerboo/Music/movie_clips/beat_it.mp3",
-        stupid: "/home/rockerboo/Music/movie_clips/stupid.mp3",
-        yadda: "/home/rockerboo/Music/movie_clips/yadda.mp3",
-      })
+   pool_name = Elirc.SoundPool.Supervisor.pool_name()
 
-    GenServer.cast(sound_client, {:play, sound})
+    :poolboy.transaction(
+      pool_name,
+      fn(pid) -> :gen_server.call(pid, {:play, sound}, 5000) end
+    )
   end
 
   def run_command(cmd, channel, state) do
-    {:ok, command_pid} = Elirc.Command.start_link(state.client, state.token, channel)
+    pool_name = Elirc.CommandPool.Supervisor.pool_name()
 
-    GenServer.cast(command_pid, {:cmd, cmd})
+    :poolboy.transaction(
+      pool_name,
+      fn(pid) ->
+        :gen_server.call(pid, {:run, [cmd: cmd, channel: channel]})
+      end
+    )
   end
 
   def parse_command(command) do
@@ -91,6 +83,7 @@ defmodule Elirc.MessagePool.Worker do
       "getsmeeverytime" -> {:sound, "getsmeeverytime"}
       "talkingabout" -> {:sound, "talkingabout"}
       "beat_it" -> {:sound, "beat_it"}
+      "whatsthat" -> {:sound, "whatsthat"}
       "stupid" -> {:sound, "stupid"}
       "yadda" -> {:sound, "yadda"}
       "follower" -> {:cmd, "follower"}
@@ -111,5 +104,16 @@ defmodule Elirc.MessagePool.Worker do
       "song" -> {:cmd, "song"}
       _ -> nil
     end
+  end
+
+  def handle_info(reason, state) do
+    IO.inspect reason
+
+    {:noreply, state}
+  end
+
+  def terminate(reason, state) do
+    IO.inspect reason
+    :ok
   end
 end

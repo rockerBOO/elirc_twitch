@@ -25,6 +25,8 @@ defmodule Elirc.Handler.Connection do
 
     pass = Application.get_env(:twitch, :access_token)
 
+    debug "Logging into #{state.nick}"
+
     # Login to Twitch IRC
     ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick,
       state.user, state.name
