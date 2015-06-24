@@ -20,9 +20,13 @@ defmodule Elirc.MessagePool.Worker do
     end
   end
 
+  @doc """
+
+  ## Example
+  Elirc.MessagePool.Worker.process_message_for_data("danBad danBat")
+  """
   def process_message_for_data(message) do
-    # emotes = Elirc.Emoticon.get_all!()
-    emotes = []
+    emotes = Elirc.Emoticon.get_all!()
 
     message
       |> Message.find_emotes(emotes)
