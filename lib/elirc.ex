@@ -11,7 +11,11 @@ defmodule Elirc do
     {:ok, rest_client} = RestTwitch.Request.start
 
     # Start up the emoticon ETS
-    Elirc.Emoticon.start()
+    {:ok, emoticon_pid} = Elirc.Emoticon.start_link()
+
+    IO.puts "Fetching and importing emoticons..."
+
+    GenServer.cast(emoticon_pid, "fetch_and_import")
 
     # Twitch OAuth2 Access Token
     token = System.get_env("TWITCH_ACCESS_TOKEN")
@@ -38,6 +42,7 @@ defmodule Elirc do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Elirc.Supervisor]
     Supervisor.start_link(children, opts)
+    # supervisor(children, opts)
   end
 
   def terminate(reason, state) do
