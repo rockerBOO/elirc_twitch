@@ -13,17 +13,11 @@ defmodule Elirc.Command do
     {:ok, %{client: client, token: token, channel: channel}}
   end
 
-  def handle_cast({:cmd, cmd}, state) do
-    cmd(cmd, state)
-
-    {:noreply, state}
-  end
-
-  def cmd(cmd, state) do
+  def cmd(cmd, channel, token, client) do
     case cmd do
-      "follower" -> Message.send_say(get_last_follower(), state.channel, state.client)
-      "followed" -> Message.send_say(get_last_followed(state.token), state.channel, state.client)
-      "song" -> Message.send_say(get_last_track(), state.channel, state.client)
+      "follower" -> Message.send_say(get_last_follower(), channel, client)
+      "followed" -> Message.send_say(get_last_followed(token), channel, client)
+      "song" -> Message.send_say(get_last_track(), channel, client)
       _ -> IO.inspect cmd
     end
   end

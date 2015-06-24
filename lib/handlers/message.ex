@@ -8,13 +8,12 @@ defmodule Elirc.Handler.Message do
     {:ok, %{client: client, token: token}}
   end
 
-  def handle_info({:received, msg, user, channel}, state) do 
+  def handle_info({:received, msg, user, channel}, state) do
     pool_name = Elirc.MessagePool.Supervisor.pool_name()
 
     :poolboy.transaction(
       pool_name,
-      fn(pid) -> :gen_server.call(pid, [channel, user, msg]) end,
-      :infinity
+      fn(pid) -> :gen_server.cast(pid, [channel, user, msg]) end
     )
 
     {:noreply, state}
@@ -26,6 +25,7 @@ defmodule Elirc.Handler.Message do
   end
 
   def terminate(reason, state) do
+    IO.inspect reason
     :ok
   end
 end

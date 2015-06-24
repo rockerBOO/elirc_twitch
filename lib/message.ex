@@ -17,8 +17,6 @@ defmodule Elirc.Message do
     client |> ExIrc.Client.msg(:privmsg, channel, message)
   end
 
-
-
   def find_emotes(message, emotes) do
     _ = Elirc.Emoticon.find_emotes!(message, emotes)
 
