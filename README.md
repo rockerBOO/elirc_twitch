@@ -16,7 +16,6 @@ Currently runs in iex
 	iex -S mix
 
 
-Channels are currently set in `lib/elirc.ex`. `worker(Elirc.Handler.Login, [client, ["#dansgaming"]]),
-
+Channels are currently set in `lib/elirc.ex`.
 
 ![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.png)

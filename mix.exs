@@ -12,7 +12,7 @@ defmodule Elirc.Mixfile do
 
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :exirc],
+    [applications: [:logger, :exirc, :quantum],
      mod: {Elirc.App, []}]
   end
 
@@ -20,11 +20,12 @@ defmodule Elirc.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 1.0"},
+      {:quantum, ">= 1.2.4"},
       {:poolboy, github: "devinus/poolboy"},
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},
-      {:rest_twitch, github: "rockerboo/rest_twitch"},
-      # {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
+      # {:rest_twitch, github: "rockerboo/rest_twitch"},
+      {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
       {:exml, github: "expelledboy/exml"},
       {:timex, "~> 0.12.9"},
       {:socket, "~> 0.2.8"}

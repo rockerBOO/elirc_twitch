@@ -10,6 +10,7 @@
   "plug": {:hex, :plug, "0.13.0"},
   "poison": {:hex, :poison, "1.4.0"},
   "poolboy": {:git, "git://github.com/devinus/poolboy.git", "3bb48a893ff5598f7c73731ac17545206d259fac", []},
+  "quantum": {:hex, :quantum, "1.2.4"},
   "ranch": {:hex, :ranch, "1.0.0"},
   "rest_twitch": {:git, "git://github.com/rockerboo/rest_twitch.git", "2c193d0c1ed53efe14da3aa2b5cbc502985f0c5a", []},
   "socket": {:hex, :socket, "0.2.8"},
