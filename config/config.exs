@@ -24,3 +24,7 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+
+config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
+                username: System.get_env("TWITCH_USERNAME"),
+                channels: "#dansgaming #rockerboo" # Space seperated
