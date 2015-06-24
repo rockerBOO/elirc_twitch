@@ -5,21 +5,38 @@ defmodule Elirc.Message do
               client: nil
   end
 
-	def start_link(client, channel, message) do
-    GenServer.start_link(__MODULE__, [client, channel, message])
+  def say(message, channel, client, noisy? \\ true) do
+    if noisy? do
+      send_say(message, channel, client)
+    end
   end
 
-  def init([client, channel, message]) do 
-    state = %{client: client, channel: channel, message: message}
+  def send_say(message, channel, client) do
+    # IO.puts "SILENT ----"
 
-    process_command(message, channel, client)
-
-    {:ok, state}
+    client |> ExIrc.Client.msg(:privmsg, channel, message)
   end
 
-  def process_command(message, channel, client) do
-    {:ok, command} = Elirc.Bot.Command.start_link(client, channel)
-
-    GenServer.cast(command, {:process, message})
+  def find_emotes(message, emotes) do
+    emotes
+      |> Enum.map fn (emote) -> find_emote(message, emote) end
   end
+
+  def find_emote(message, emote) do
+    Regex.compile("\s" <> emote <> "\s")
+      |> Regex.run(message)
+  end
+
+  def find_spam(message) do
+    Elirc.Message.Spam.find(message)
+  end
+
+  def find_links(message) do
+    Elirc.Message.Link.find(message)
+  end
+
+  def find_users(message, channel, users) do
+    Elirc.Channel.users(channel)
+  end
+
 end

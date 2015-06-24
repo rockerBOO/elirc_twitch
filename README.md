@@ -33,8 +33,6 @@ export TWITCH_USERNAME=your_username
 Then, just be sure to run `source .env` in your shell before compiling your
 project.
 
-Channels are currently set in `lib/elirc.ex`. `worker(Elirc.Handler.Login, [client, ["#dansgaming"]]),
-
 ## Usage
 
 Currently runs in iex

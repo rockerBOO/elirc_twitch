@@ -1,14 +1,14 @@
 defmodule Elirc.Channel do
   @doc """
   client = ExIrc.Client
-  channel = "#channel" 
+  channel = "#channel"
   """
   def start_link(client, channel, opts \\ []) do
     GenServer.start_link(__MODULE__, [client, channel], opts)
   end
 
   def init([client, channel]) do
-    IO.inspect channel 
+    IO.inspect channel
     users = HashSet.new
 
     {:ok, [client, channel, users]}
@@ -32,6 +32,14 @@ defmodule Elirc.Channel do
     users = HashSet.delete(users, user)
 
     [client, channel, users]
+  end
+
+  def users(channel) do
+
+  end
+
+  def get_users(state) do
+
   end
 
   def handle_call({:remove, user}, _from, state) do

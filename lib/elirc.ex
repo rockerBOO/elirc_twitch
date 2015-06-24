@@ -9,7 +9,9 @@ defmodule Elirc do
     import Supervisor.Spec
 
     {:ok, rest_client} = RestTwitch.Request.start
-    {:ok, token_rest_client} = RestTwitch.TokenRequest.start
+
+    # Start up the emoticon ETS
+    Elirc.Emoticon.start()
 
     # Twitch OAuth2 Access Token
     token = System.get_env("TWITCH_ACCESS_TOKEN")
@@ -39,6 +41,9 @@ defmodule Elirc do
   end
 
   def terminate(reason, state) do
-    IO.puts reason
+    # Quit the channel and close the underlying client connection when the process is terminating
+    ExIrc.Client.quit state.client, "Goodbye, cruel world."
+    ExIrc.Client.stop! state.client
+    :ok
   end
 end
