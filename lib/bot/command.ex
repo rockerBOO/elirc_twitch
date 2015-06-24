@@ -1,6 +1,10 @@
 defmodule Elirc.Bot.Command do
+  alias RestTwitch.Channels
+  alias RestTwitch.User
+  alias RestTwitch.Follows.Follow
+
   def start_link(client, token, channel) do
-    GenServer.start_link(__MODULE__, [client, token, channel, noisy?: true])
+    GenServer.start_link(__MODULE__, [client, token, channel, noisy?: false])
   end
 
   def init([client, token, channel, noisy?: noisy]) do
@@ -151,8 +155,8 @@ defmodule Elirc.Bot.Command do
   """
   def get_last_follower() do
     opts = [direction: "desc", limit: 1]
-    %RestTwitch.Follows.Follow{user: user} =
-      RestTwitch.Channels.followers("rockerboo", opts)
+    %Follow{user: user} =
+      Channels.followers("rockerboo", opts)
       |> Enum.fetch! 0
 
     user
@@ -161,7 +165,7 @@ defmodule Elirc.Bot.Command do
 
   def get_last_followed(token) do
     %{"display_name" => display_name} =
-      RestTwitch.Users.streams_following(token, [limit: 1])
+      Users.streams_following(token, [limit: 1])
       # |> Map.fetch!("streams")
       |> Enum.fetch!(0)
       |> Map.fetch!(:channel)

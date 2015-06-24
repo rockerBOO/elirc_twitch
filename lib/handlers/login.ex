@@ -25,8 +25,8 @@ defmodule Elirc.Handler.Login do
   def handle_info(:logged_in, state = {client, channels}) do
     debug "Logged in to server"
 
-    # Request capabilities before joining the channel 
-    [':twitch.tv/membership', 
+    # Request capabilities before joining the channel
+    [':twitch.tv/membership',
       ':twitch.tv/commands']
      |> Enum.each(fn (cap) -> cap_request(client, cap) end)
 
@@ -38,6 +38,13 @@ defmodule Elirc.Handler.Login do
     ExIrc.Client.join(client, channel)
 
     Elirc.Channel.Supervisor.new_channel(client, channel)
+
+    start_timeout(client, channel)
+  end
+
+  def start_timeout(client, channel) do
+    msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
+    Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.send_say(msg, channel, client) end)
   end
 
   # Catch-all for messages you don't care about

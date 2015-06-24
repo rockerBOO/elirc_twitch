@@ -26,4 +26,13 @@ defmodule Elirc.MessagePool.Supervisor do
   def pool_name() do
     :message_pool
   end
+
+  def terminate(reason, state) do
+    IO.inspect reason
+    :ok
+  end
+
+  defp debug(msg) do
+    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
+  end
 end
