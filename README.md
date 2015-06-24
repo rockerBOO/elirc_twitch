@@ -40,6 +40,6 @@ Currently runs in iex
 	iex -S mix
 
 
-## Proces flow
+## Process flow
 
 ![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.png)
