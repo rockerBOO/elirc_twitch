@@ -50,13 +50,11 @@ defmodule Elirc.Message do
   end
 
   def found_words(found) do
-    IO.inspect found
-
     found
-      |> Enum.each(fn (word) -> process_word(word) end)
+      |> Enum.each(fn (words) -> process_words(words) end)
   end
 
-  def process_word(word) do
+  def process_words(word) do
     case word do
       ["danThink"] -> Elirc.Sound.play("dont")
       ["deIlluminati"] -> Elirc.Sound.play("xfiles")
