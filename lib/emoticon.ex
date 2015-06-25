@@ -165,6 +165,7 @@ defmodule Elirc.Emoticon do
   """
   def get(emoticon) do
     lookup(emoticon, :emoticons)
+      |> handle_result()
   end
 
   @doc """
@@ -175,6 +176,7 @@ defmodule Elirc.Emoticon do
   """
   def get_global_emote(emoticon) do
     lookup(emoticon, :emote_global)
+      |> handle_result()
   end
 
   @doc """
@@ -185,6 +187,14 @@ defmodule Elirc.Emoticon do
   """
   def get_set(set) do
     lookup(set, :emote_sets)
+      |> handle_result()
+  end
+
+  def get_image(image_id) do
+    result = image_id
+      |> Integer.to_string()
+      |> lookup(:emote_images)
+      |> handle_result
   end
 
   @doc """
@@ -197,6 +207,19 @@ defmodule Elirc.Emoticon do
     lookup(channel, :emote_subscribers)
   end
 
+  def handle_result([result]) do
+    IO.puts "result in list"
+    IO.inspect result
+    result
+  end
+
+  def handle_result(result) do
+    IO.puts "catch all"
+    IO.inspect result
+
+    result
+  end
+
   @doc """
   Gets the subscriber emotes
 
@@ -207,6 +230,22 @@ defmodule Elirc.Emoticon do
     get_subscriber(channel)
       |> Map.fetch!("emotes")
   end
+# {
+#     "code": "movember",
+#     "channel": "beyondthesummit",
+#     "set": 23
+# },
+  def get_image_details(image_id) do
+    case get_image(image_id) do
+      {_, value} -> value
+      [] -> %{}
+    end
+  end
+
+  def get_emoticon_details(emoticon) do
+    get_image_id(emoticon)
+      |> get_image_details
+  end
 
   @doc """
   Gets the image_id for the emoticon
@@ -215,8 +254,22 @@ defmodule Elirc.Emoticon do
   get_image_id("DansGame")
   """
   def get_image_id(emoticon) do
-    get(emoticon)
-      |> Map.fetch!("image_id")
+    image = get(emoticon)
+
+    if image == [] do
+      0
+    end
+
+    case image do
+      {_, image} -> parse_image!(image)
+      [] -> 0
+    end
+  end
+
+  def parse_image!(image) do
+    case image do
+      %{"image_id" => image_id} -> image_id
+    end
   end
 
   @doc """
@@ -278,6 +331,10 @@ defmodule Elirc.Emoticon do
   get_emote({"danBad", %{"image_id" => 32728}})
   """
   def get_emote({emote, _}) do
+    emote
+  end
+
+  def get_emote([emote]) do
     emote
   end
 

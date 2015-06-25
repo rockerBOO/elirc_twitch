@@ -35,6 +35,11 @@ defmodule Elirc.Message do
     message
   end
 
+  def find_words(message, words) do
+
+    message
+  end
+
   def find_users(message, channel, users) do
     Elirc.Channel.users(channel)
 

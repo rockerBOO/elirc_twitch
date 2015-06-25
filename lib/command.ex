@@ -14,12 +14,21 @@ defmodule Elirc.Command do
   end
 
   def cmd(cmd, channel, token, client) do
-    case cmd do
-      "follower" -> Message.send_say(get_last_follower(), channel, client)
-      "followed" -> Message.send_say(get_last_followed(token), channel, client)
-      "song" -> Message.send_say(get_last_track(), channel, client)
+    case String.split(cmd) do
+      ["follower"] -> Message.say(get_last_follower(), channel, client)
+      ["followed"] -> Message.say(get_last_followed(token), channel, client)
+      ["song"] -> Message.say(get_last_track(), channel, client)
+      ["emote" | emote] -> Message.say(emote(emote), channel, client)
       _ -> IO.inspect cmd
     end
+  end
+
+  def emote(emote) do
+    IO.inspect emote
+
+    Elirc.Emoticon.get_emote(emote)
+      |> Elirc.Emoticon.get_emoticon_details()
+      |> Poison.encode!()
   end
 
   @doc """
