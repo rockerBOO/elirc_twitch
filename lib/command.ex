@@ -13,6 +13,17 @@ defmodule Elirc.Command do
     {:ok, %{client: client, token: token, channel: channel}}
   end
 
+  def run(cmd, channel) do
+    pool_name = Elirc.CommandPool.Supervisor.pool_name()
+
+    :poolboy.transaction(
+      pool_name,
+      fn(pid) ->
+        :gen_server.call(pid, {:run, [cmd: cmd, channel: channel]})
+      end
+    )
+  end
+
   def cmd(cmd, channel, token, client) do
     case String.split(cmd) do
       ["follower"] -> Message.say(get_last_follower(), channel, client)

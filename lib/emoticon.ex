@@ -299,7 +299,7 @@ defmodule Elirc.Emoticon do
       |> Enum.reject(fn (emotes) -> length(emotes) == 0 end)
       |> Enum.map(fn (emotes) -> Map.put(%{}, hd(emotes), %{"count" => length(emotes)}) end)
 
-    IO.inspect x
+    # IO.inspect x
 
     x
   end
