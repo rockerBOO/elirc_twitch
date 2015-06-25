@@ -28,3 +28,5 @@ use Mix.Config
 config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                 username: System.get_env("TWITCH_USERNAME"),
                 channels: "#rockerboo" # Space seperated
+
+config :extend, extensions: [ConnectionExtension]

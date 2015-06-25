@@ -8,9 +8,10 @@ defmodule Elirc do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    {:ok, rest_client} = RestTwitch.Request.start
+    # REST Twitch API
+    {:ok, rest_client} = RestTwitch.Request.start()
 
-    # Start up the emoticon ETS
+    # Emoticons
     {:ok, emoticon_pid} = Elirc.Emoticon.start_link()
 
     IO.puts "Fetching and importing emoticons..."
@@ -20,7 +21,15 @@ defmodule Elirc do
     # Twitch OAuth2 Access Token
     token = System.get_env("TWITCH_ACCESS_TOKEN")
 
-    {:ok, client} = ExIrc.Client.start_link [debug: true]
+    {:ok, client} = ExIrc.Client.start_link([debug: true])
+
+    ## Extensions
+    {:ok, extension} = Elirc.Extension.start_link()
+
+    IO.puts "Extension"
+    IO.inspect extension
+
+    # GenServer.call(extension, :start)
 
     # Twitch Channels
     channels = Application.get_env(:twitch, :channels) |> String.split(" ")
@@ -37,7 +46,7 @@ defmodule Elirc do
       worker(Elirc.Channel.Supervisor, [client]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),
       worker(Elirc.CommandPool.Supervisor, [client, token]),
-      worker(Elirc.SoundPool.Supervisor, [])
+      worker(Elirc.SoundPool.Supervisor, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

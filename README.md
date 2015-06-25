@@ -18,7 +18,7 @@ config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                    username:  System.get_env("TWITCH_USERNAME")
 ```
 
-Set the twitch access token to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/).
+Set the twitch access token to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/). The chat key only is scoped for "chat_login" and won't work with RestTwitch intergration without "user_read" scope.
 
 For security, I recommend that you use environment variables rather than hard
 coding your account credentials. If you don't already have an environment
