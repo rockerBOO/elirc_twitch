@@ -29,7 +29,7 @@ defmodule Elirc.MessagePool.Worker do
   """
   def process_message_for_data(message) do
     emotes = Elirc.Emoticon.get_all!()
-    words = []
+    words = ["danThink", "deIlluminati"]
 
     message
       |> Message.find_emotes(emotes)
@@ -42,30 +42,18 @@ defmodule Elirc.MessagePool.Worker do
   def command(command, channel, state) do
     case parse_command(command) do
       {:say, message} -> Message.say(message, channel, state.client)
-      {:sound, sound} -> play_sound(sound, channel, state)
-      {:cmd, cmd} -> run_command(cmd, channel, state)
+      {:sound, sound} -> play_sound(sound)
+      {:cmd, cmd} -> run_command(cmd, channel)
       _ -> :ok
     end
   end
 
-  def play_sound(sound, channel, state) do
-   pool_name = Elirc.SoundPool.Supervisor.pool_name()
-
-    :poolboy.transaction(
-      pool_name,
-      fn(pid) -> :gen_server.call(pid, {:play, sound}, 5000) end
-    )
+  def play_sound(sound) do
+    Elirc.Sound.play(sound)
   end
 
-  def run_command(cmd, channel, state) do
-    pool_name = Elirc.CommandPool.Supervisor.pool_name()
-
-    :poolboy.transaction(
-      pool_name,
-      fn(pid) ->
-        :gen_server.call(pid, {:run, [cmd: cmd, channel: channel]})
-      end
-    )
+  def run_command(cmd, channel) do
+    Elirc.Command.run(cmd, channel)
   end
 
   def command_alias(cmd_alias) do

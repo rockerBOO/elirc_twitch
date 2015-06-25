@@ -36,8 +36,32 @@ defmodule Elirc.Message do
   end
 
   def find_words(message, words) do
+    words
+      |> Enum.map(fn (word) -> find_word(message, word) end)
+      |> found_words()
 
     message
+  end
+
+  def find_word(message, word) do
+    message
+      |> String.split()
+      |> Enum.reject(fn (part) -> part != word end)
+  end
+
+  def found_words(found) do
+    IO.inspect found
+
+    found
+      |> Enum.each(fn (word) -> process_word(word) end)
+  end
+
+  def process_word(word) do
+    case word do
+      ["danThink"] -> Elirc.Sound.play("dont")
+      ["deIlluminati"] -> Elirc.Sound.play("xfiles")
+      _ -> :ok
+    end
   end
 
   def find_users(message, channel, users) do
