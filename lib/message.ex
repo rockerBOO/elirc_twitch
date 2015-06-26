@@ -5,7 +5,7 @@ defmodule Elirc.Message do
               client: nil
   end
 
-  def say(message, channel, client, noisy? \\ false) do
+  def say(message, channel, client, noisy? \\ true) do
     if noisy? do
       send_say(message, channel, client)
     end
