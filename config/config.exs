@@ -4,7 +4,7 @@ config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                 username: System.get_env("TWITCH_USERNAME"),
                 channels: [
                     {"#rockerboo", %{noisy?: true}},
-                    {"#dansgaming", %{noisy?: false}},
+                    # {"#dansgaming", %{noisy?: false}},
                     # {"#tysonrk", %{noisy?: false}},
                     # {"#riotgames", %{noisy?: false}},
                     # {"#starladder1", %{noisy?: false}},
