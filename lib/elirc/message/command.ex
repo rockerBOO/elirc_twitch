@@ -4,6 +4,9 @@ defmodule Elirc.Command do
   alias RestTwitch.User
   alias RestTwitch.Follows.Follow
   alias Elirc.Message
+  alias Elirc.Command
+  alias Elirc.Sound
+  alias Elirc.Emoticon
 
   @doc """
 
@@ -35,18 +38,29 @@ defmodule Elirc.Command do
     )
   end
 
+  def route(nil, _, _), do: :ok
+
+  def route({action, value}, channel, [client, token]) do
+    case action do
+      :say -> Message.say(value, channel, [client, token])
+      :sound -> Sound.play(value)
+      :cmd -> cmd(value, channel, [client, token])
+      _ -> :ok
+    end
+  end
+
   @doc """
   Process and route command to action
 
   ## Examples
-  cmd("follower", "#test_channel", "TWITCH_ACCESS_TOKEN", ExIrc.Client)
+  cmd("follower", "#test_channel", [ExIrc.Client, "TWITCH_ACCESS_TOKEN"])
   """
-  def cmd(cmd, channel, token, client) do
+  def cmd(cmd, channel, [client, token]) do
     case String.split(cmd) do
-      ["follower"] -> Message.say(get_last_follower(), channel, client)
-      ["followed"] -> Message.say(get_last_followed(token), channel, client)
-      ["song"] -> Message.say(get_last_track(), channel, client)
-      ["emote" | emote] -> Message.say(emote(emote), channel, client)
+      ["follower"] -> Message.say(get_last_follower(), channel, [client, token])
+      ["followed"] -> Message.say(get_last_followed(token), channel, [client, token])
+      ["song"] -> Message.say(get_last_track(), channel, [client, token])
+      ["emote" | emote] -> Message.say(emote(emote), channel, [client, token])
       _ -> IO.inspect cmd
     end
   end
@@ -114,7 +128,6 @@ defmodule Elirc.Command do
         IO.inspect reason
     end
   end
-
 
   @doc """
   Route to alias to true command

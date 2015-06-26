@@ -7,21 +7,19 @@ defmodule Elirc.MessageQueue.Worker do
   ## Example
   start_link([ExIrc.Client])
   """
-  def start_link([client]) do
-    GenServer.start_link(__MODULE__, [client], [])
+  def start_link([client, token]) do
+    GenServer.start_link(__MODULE__, [client, token], [])
   end
 
-  def init([client]) do
-    {:ok, %{client: client}}
+  def init([client, token]) do
+    {:ok, %{client: client, token: token}}
   end
 
   def route_message(msg, user, channel, state) do
     :poolboy.transaction(
       Elirc.MessagePool.Supervisor.pool_name(),
       fn (pid) ->
-        spawn(fn () -> # IO.inspect "New Worker:"; IO.inspect self;
-          Elirc.MessagePool.Worker.process(msg, channel, state)
-        end)
+        :gen_server.call(pid, {:msg, [channel, user, msg]}, 15000)
       end
     )
   end
@@ -30,7 +28,7 @@ defmodule Elirc.MessageQueue.Worker do
     route_message(msg, user, channel, state)
   end
 
-  def handle_call({:receive_msg, [msg, user, channel]}, _from, state) do
+  def handle_call({:msg, [channel, user, msg]}, _from, state) do
     # IO.puts "receive_msg"
     _ = receive_msg(msg, user, channel, state)
     {:reply, :ok, state}

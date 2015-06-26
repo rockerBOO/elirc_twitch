@@ -24,6 +24,12 @@ defmodule Elirc do
     # {:ok, client} = ExIrc.Client.start_link([debug: true])
     {:ok, client} = ExIrc.Client.start_link()
 
+    # {:ok, whisper_client} = ExIrc.Client.start_link()
+
+    # whisper_server = %Elirc.Handler.Connection.State{
+    #   host: "199.9.248.232"
+    # }
+
     ## Extensions
     {:ok, extension} = Elirc.Extension.start_link()
 
@@ -39,6 +45,7 @@ defmodule Elirc do
   	children = [
       # Handles connection actions in IRC
       worker(Elirc.Handler.Connection, [client]),
+      # worker(Elirc.Handler.Connection, [client, whisper_server]),
       # Handles Login actions
       # worker(Elirc.Handler.Login, [client, ["#rockerboo", "#jonbams", "#lirik", "#itmejp"]]),
       worker(Elirc.Handler.Login, [client, channels]),
@@ -46,7 +53,7 @@ defmodule Elirc do
       worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Channel.Supervisor, [client]),
-      worker(Elirc.MessageQueue.Supervisor, [client]),
+      worker(Elirc.MessageQueue.Supervisor, [client, token]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),
       worker(Elirc.CommandPool.Supervisor, [client, token]),
       worker(Elirc.SoundPool.Supervisor, []),

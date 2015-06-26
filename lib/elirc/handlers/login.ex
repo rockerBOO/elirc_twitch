@@ -79,9 +79,6 @@ defmodule Elirc.Handler.Login do
   join({"#rockerboo", %{noisy?: true}}, Exirc.Client)
   """
   def join(client, {channel, channel_details}) do
-    IO.inspect client
-    IO.inspect channel
-
     ExIrc.Client.join(client, channel)
 
     ChannelSupervisor.new(channel, channel_details)
@@ -89,6 +86,8 @@ defmodule Elirc.Handler.Login do
     start_recurring(client, channel)
 
     start_metrics(channel)
+
+    debug "Joined channel: #{channel}"
   end
 
   @doc """
