@@ -53,6 +53,8 @@ defmodule Elirc.Handler.Login do
     [':twitch.tv/membership',
       ':twitch.tv/commands']
       |> Enum.each(fn (cap) -> cap_request(client, cap) end)
+
+    client
   end
 
   @doc """
@@ -64,7 +66,7 @@ defmodule Elirc.Handler.Login do
   """
   def join(client, channels) when is_list(channels) do
     channels
-      |> Enum.map(&join(&1, client))
+      |> Enum.map(&join(client, &1))
 
     client
   end
@@ -76,6 +78,9 @@ defmodule Elirc.Handler.Login do
   join({"#rockerboo", %{noisy?: true}}, Exirc.Client)
   """
   def join(client, {channel, channel_details}) do
+    IO.inspect client
+    IO.inspect channel
+
     ExIrc.Client.join(client, channel)
 
     Elirc.Channel.Supervisor.new_channel(client, channel)
