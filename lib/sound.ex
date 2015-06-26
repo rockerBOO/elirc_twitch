@@ -12,11 +12,11 @@ defmodule Elirc.Sound do
 
     :poolboy.transaction(
       pool_name,
-      fn(pid) -> :gen_server.call(pid, {:play, sound}, 10000) end
+      fn(pid) -> :gen_server.call(pid, {:play, sound}, 15000) end
     )
   end
 
-  def handle_cast({:play, sound}, state) do
+  def handle_call({:play, sound}, state) do
     play(sound, state)
 
     {:noreply, state}
@@ -43,7 +43,17 @@ defmodule Elirc.Sound do
 
   def play_mp3(file, state) do
     debug "Playing " <> file
-    System.cmd "mpg123", ["-q", file]
+    Porcelain.exec("mpg123", ["-q", file])
+
+    # :timer.sleep(3000)
+  end
+
+  def handle_info({"DOWN", ref, _, _, _}, state) do
+
+  end
+
+  def handle_info({"EXIT", pid, _reason}, state) do
+
   end
 
   defp debug(msg) do

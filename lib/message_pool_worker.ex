@@ -9,16 +9,17 @@ defmodule Elirc.MessagePool.Worker do
     {:ok, %{client: client, token: token}}
   end
 
-  def handle_cast([channel, user, message], state) do
-    process(message, channel, state)
-
-    {:noreply, state}
+  def handle_call([channel, user, message], _from, state) do
+    # IO.inspect "Processing message on:"
+    # IO.inspect self
+    {:reply, process(message, channel, state), state}
   end
 
   def process(message, channel, state) do
+    # IO.puts "Process #{message}"
     case String.lstrip(message) do
       "!" <> command -> command(command, channel, state)
-      message -> process_message_for_data(message)
+      message -> process_message_for_data(message, state)
     end
   end
 
@@ -27,12 +28,12 @@ defmodule Elirc.MessagePool.Worker do
   ## Example
   Elirc.MessagePool.Worker.process_message_for_data("danBad danBat")
   """
-  def process_message_for_data(message) do
+  def process_message_for_data(message, state) do
     emotes = Elirc.Emoticon.get_all!()
-    words = ["danThink", "deIlluminati"]
+    words = ["danThink", "deIlluminati", "danBat"]
 
     message
-      |> Message.find_emotes(emotes)
+      |> Message.find_emotes(emotes, state)
       |> Message.find_words(words)
       # |> Message.find_users(users)
       |> Message.find_links()
@@ -40,6 +41,11 @@ defmodule Elirc.MessagePool.Worker do
   end
 
   def command(command, channel, state) do
+    # IO.inspect command
+    # IO.inspect channel
+    # IO.inspect state
+    # IO.inspect parse_command(command)
+
     case parse_command(command) do
       {:say, message} -> Message.say(message, channel, state.client)
       {:sound, sound} -> play_sound(sound)
@@ -70,6 +76,8 @@ defmodule Elirc.MessagePool.Worker do
       ["63"] -> ["speedlimit"]
       ["65"] -> ["speedlimit"]
       ["danThink"] -> ["dont"]
+      ["cmd"] -> ["commands"]
+      ["cmdlist"] -> ["commands"]
       cmd -> cmd
     end
   end
@@ -94,6 +102,7 @@ defmodule Elirc.MessagePool.Worker do
       ["whatsthat"] -> {:sound, "whatsthat"}
       ["stupid"] -> {:sound, "stupid"}
       ["yadda"] -> {:sound, "yadda"}
+      ["batman"] -> {:sound, "batman"}
       ["follower"] -> {:cmd, "follower"}
       ["followed"] -> {:cmd, "followed"}
       ["elixir"] -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}

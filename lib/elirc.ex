@@ -21,7 +21,8 @@ defmodule Elirc do
     # Twitch OAuth2 Access Token
     token = System.get_env("TWITCH_ACCESS_TOKEN")
 
-    {:ok, client} = ExIrc.Client.start_link([debug: true])
+    # {:ok, client} = ExIrc.Client.start_link([debug: true])
+    {:ok, client} = ExIrc.Client.start_link()
 
     ## Extensions
     {:ok, extension} = Elirc.Extension.start_link()
@@ -30,9 +31,10 @@ defmodule Elirc do
     IO.inspect extension
 
     # GenServer.call(extension, :start)
+    # GenServer.call(extension, {:add_handler, spawn(fn -> IO.puts "Hello" end)})
 
     # Twitch Channels
-    channels = Application.get_env(:twitch, :channels) |> String.split(" ")
+    channels = Application.get_env(:twitch, :channels)
 
   	children = [
       # Handles connection actions in IRC
@@ -44,6 +46,7 @@ defmodule Elirc do
       worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Channel.Supervisor, [client]),
+      worker(Elirc.MessageProxy.Supervisor, [client]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),
       worker(Elirc.CommandPool.Supervisor, [client, token]),
       worker(Elirc.SoundPool.Supervisor, []),

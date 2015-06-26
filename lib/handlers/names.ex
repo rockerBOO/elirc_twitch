@@ -1,4 +1,4 @@
-defmodule Elirc.Handler.Names do 
+defmodule Elirc.Handler.Names do
   alias Elirc.Channel.Supervisor, as: ChannelSup
   @moduledoc """
   Handles Users joining/parting of the channel
@@ -28,19 +28,19 @@ defmodule Elirc.Handler.Names do
 
   # nick has joined the channel
   def handle_info({:joined, channel, user}, state) do
-    IO.puts "#{user} has joined #{channel}"
+    # IO.puts "#{user} has joined #{channel}"
 
-    channel_atom = ChannelSup.channel_to_atom(channel)
-    GenServer.call(channel_atom, {:add, user}) 
+    ChannelSup.channel_to_atom(channel)
+      |> GenServer.call({:add, user})
 
     {:noreply, state}
   end
 
   def handle_info({:parted, channel, user}, state) do
-    IO.puts "#{user} has left #{channel}"
+    # IO.puts "#{user} has left #{channel}"
 
-    channel_atom = ChannelSup.channel_to_atom(channel)
-    GenServer.call(channel_atom, {:remove, user})
+    ChannelSup.channel_to_atom(channel)
+      |> GenServer.call({:remove, user})
 
     {:noreply, state}
   end

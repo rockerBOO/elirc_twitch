@@ -12,7 +12,7 @@ defmodule Elirc.Mixfile do
 
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :exirc, :quantum],
+    [applications: [:logger, :exirc, :quantum, :porcelain, :beaker],
      mod: {Elirc.App, []}]
   end
 
@@ -21,7 +21,11 @@ defmodule Elirc.Mixfile do
     [
       {:cowboy, "~> 1.0"},
       {:quantum, ">= 1.2.4"},
+      {:beaker, github: "rockerboo/beaker"},
+      {:porcelain, "~> 2.0"},
       {:poolboy, github: "devinus/poolboy"},
+      # {:jobs, github: "uwiger/jobs", tag: "HEAD", override: true},
+      # {:edown, ~r/.*/, [git: "git://github.com/esl/edown.git", ref: "HEAD"]}
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},
       # {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},

@@ -1,32 +1,27 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
-
-# This configuration is loaded before any dependency and is restricted
-# to this project. If another project depends on this project, this
-# file won't be loaded nor affect the parent project. For this reason,
-# if you want to provide default values for your application for third-
-# party users, it should be done in your mix.exs file.
-
-# Sample configuration:
-#
-#     config :logger,
-#       level: :info
-#
-#     config :logger, :console,
-#       format: "$date $time [$level] $metadata$message\n",
-#       metadata: [:user_id]
-
-# It is also possible to import configuration files, relative to this
-# directory. For example, you can emulate configuration per environment
-# by uncommenting the line below and defining dev.exs, test.exs and such.
-# Configuration from the imported file will override the ones defined
-# here (which is why it is important to import them last).
-#
-#     import_config "#{Mix.env}.exs"
 
 config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                 username: System.get_env("TWITCH_USERNAME"),
-                channels: "#rockerboo" # Space seperated
+                channels: [
+                    {"#rockerboo", %{noisy?: true}},
+                    {"#dansgaming", %{noisy?: false}},
+                    # {"#tysonrk", %{noisy?: false}},
+                    # {"#riotgames", %{noisy?: false}},
+                    # {"#starladder1", %{noisy?: false}},
+                    # {"#summit1g", %{noisy?: false}},
+                    # {"#arteezy", %{noisy?: false}},
+                    # {"#starladder_hs_en", %{noisy?: false}},
+                    # {"#summonersinnlive", %{noisy?: false}},
+                    # {"#sodapoppin", %{noisy?: false}},
+                    # {"#ogaminglol", %{noisy?: false}},
+                    # {"#castro_1021", %{noisy?: false}},
+                    # {"#reynad27", %{noisy?: false}},
+                    # {"#trumpsc", %{noisy?: false}},
+                    # {"#esportal", %{noisy?: false}},
+                    # {"#smitegame", %{noisy?: false}},
+                    # {"#startladder_hs_ru", %{noisy?: false}},
+                    # {"#helenalive", %{noisy?: false}},
+                    # {"#nerdist", %{noisy?: false}}
+                  ]
 
 config :extend, extensions: [ConnectionExtension]

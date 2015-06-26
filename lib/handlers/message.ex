@@ -1,4 +1,13 @@
 defmodule Elirc.Handler.Message do
+  alias Beaker.Counter
+  alias Beaker.TimeSeries
+
+  @doc """
+  Starts the message handler
+
+  ## Example
+  start_link(ExIrc.Client, "ACCESS_TOKEN_HASH")
+  """
   def start_link(client, token) do
     GenServer.start_link(__MODULE__, [client, token])
   end
@@ -8,12 +17,19 @@ defmodule Elirc.Handler.Message do
     {:ok, %{client: client, token: token}}
   end
 
+  @doc """
+  Handles messages sent from IRC
+  """
   def handle_info({:received, msg, user, channel}, state) do
-    pool_name = Elirc.MessagePool.Supervisor.pool_name()
+
+    # Add counter increment to channel
+    Beaker.Counter.incr(channel)
+
+    pool_name = Elirc.MessageProxy.Supervisor.pool_name()
 
     :poolboy.transaction(
       pool_name,
-      fn(pid) -> :gen_server.cast(pid, [channel, user, msg]) end
+      fn (pid) -> :gen_server.call(pid, {:receive_msg, [msg, user, channel]}) end
     )
 
     {:noreply, state}

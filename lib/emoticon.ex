@@ -1,4 +1,6 @@
 defmodule Elirc.Emoticon do
+  alias Beaker.Counter
+  alias Beaker.TimeSeries
 
   def start_link() do
     GenServer.start_link(__MODULE__, [])
@@ -7,7 +9,16 @@ defmodule Elirc.Emoticon do
   def init([]) do
     _ = start()
 
+    start_metrics()
+
     {:ok, []}
+  end
+
+  def start_metrics() do
+    # Every 1 min, flush channel metric count
+    Quantum.add_job("*/1 * * * *", fn ->
+      Elirc.Emoticon.process_metrics()
+    end)
   end
 
   def handle_cast("fetch_and_import", state) do
@@ -118,6 +129,9 @@ defmodule Elirc.Emoticon do
 
   @doc """
   Save emote to main list of emoticons
+
+  ## Example
+  save(:emoticons, "danBad", %{"image_id" => 234}})
   """
   defp save(bucket, key, value) do
     if Map.has_key?(value, "emotes") do
@@ -129,10 +143,14 @@ defmodule Elirc.Emoticon do
     end
   end
 
-# "4Head": {
-#     "description": "This is the face of a popular Twitch streamer. twitch.tv/cadburryftw",
-#     "image_id": 354
-# },
+  @doc """
+  Saves the emote to the main dataset
+
+  ## Example
+  save_main_emote(%{"4Head": {"description": "This is the face of a popular Twitch streamer. twitch.tv/cadburryftw",
+     "image_id": 354
+  }})
+  """
   defp save_main_emote(emote) do
     case emote do
       %{"code" => code, "image_id" => image_id} ->
@@ -190,6 +208,12 @@ defmodule Elirc.Emoticon do
       |> handle_result()
   end
 
+  @doc """
+  Get image details from image id
+
+  ## Example
+  get_image(2933)
+  """
   def get_image(image_id) do
     result = image_id
       |> Integer.to_string()
@@ -242,6 +266,12 @@ defmodule Elirc.Emoticon do
     end
   end
 
+  @doc """
+  Gets details about the emoticon
+
+  ## Example
+  get_emoticon_details("danBad")
+  """
   def get_emoticon_details(emoticon) do
     get_image_id(emoticon)
       |> get_image_details
@@ -266,6 +296,12 @@ defmodule Elirc.Emoticon do
     end
   end
 
+  @doc """
+  Parse map for image_id
+
+  ## Example
+  parse_image!(%{"image_id" => 2})
+  """
   def parse_image!(image) do
     case image do
       %{"image_id" => image_id} -> image_id
@@ -302,6 +338,39 @@ defmodule Elirc.Emoticon do
     # IO.inspect x
 
     x
+  end
+
+  @doc """
+  Processes metrics for all emotes on all channels
+  """
+  def process_metrics() do
+    Elirc.Emoticon.get_all!()
+      |> Enum.each(fn (emote) ->
+          emoticon = get_emote(emote)
+
+          count = Counter.get(emoticon)
+
+          case count do
+            nil -> nil
+            count -> save_sample(count, emoticon)
+          end
+        end)
+  end
+
+  @doc """
+  Saving sample count for the emoticon in the TimeSeries
+
+  ## Example
+  save_sample(3, "danBad")
+  """
+  def save_sample(count, emoticon) do
+    debug "Processing Metrics for #{emoticon}"
+    TimeSeries.sample(emoticon, count)
+
+    Beaker.TimeSeries.get(emoticon)
+      |> IO.inspect
+
+    Counter.set(emoticon, 0)
   end
 
   @doc """
@@ -345,5 +414,9 @@ defmodule Elirc.Emoticon do
   """
   def get_emote(emote) do
     emote
+  end
+
+  defp debug(msg) do
+    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
   end
 end
