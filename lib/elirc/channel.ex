@@ -89,10 +89,10 @@ defmodule Elirc.Channel do
   end
 
   @doc """
-  Adds user to HasSet in state
+  Adds user to HashSet in state
 
   ## Examples
-      iex> Elirc.Channel.add_user_to_state("rockerboo", %{users: HashSet.new})
+      Elirc.Channel.add_user_to_state("rockerboo", %{users: HashSet.new})
       %{users: #HashSet<["rockerboo"]>}
   """
   def add_user_to_state(user, state) do
@@ -100,11 +100,11 @@ defmodule Elirc.Channel do
   end
 
   @doc """
-  Remove user to HasSet in state
+  Remove user to HashSet in state
 
   ## Examples
-      iex> users = HashSet.new
-      iex> Elirc.Channel.remove_user_from_state("rockerboo", %{users: HashSet.put(users, "rockerboo")})
+      users = HashSet.new
+      Elirc.Channel.remove_user_from_state("rockerboo", %{users: HashSet.put(users, "rockerboo")})
       %{users: #HashSet<[]>}
   """
   def remove_user_from_state(user, state) do
