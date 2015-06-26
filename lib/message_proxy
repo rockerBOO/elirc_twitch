@@ -1,0 +1,22 @@
+defmodule Elirc.MessageProxy.Worker do
+  alias Elirc.Message
+
+  def start_link() do
+    GenServer.start_link(__MODULE__, [], [])
+  end
+
+  def init() do
+    {:ok, }
+  end
+
+  def handle_info(reason, state) do
+    IO.inspect reason
+
+    {:noreply, state}
+  end
+
+  def terminate(reason, state) do
+    IO.inspect reason
+    :ok
+  end
+end

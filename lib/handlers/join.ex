@@ -11,8 +11,18 @@ defmodule Elirc.Handler.Join do
     {:ok, client}
   end
 
+  def handle_info({:mode, [channel, op, user]}, state) do
+    IO.inspect channel
+    IO.inspect op
+    IO.inspect user
+
+    {:noreply, state}
+  end
+
   # # Catch-all for messages you don't care about
   def handle_info(msg, state) do
+    IO.inpsect msg
+
     # debug msg
     {:noreply, state}
   end

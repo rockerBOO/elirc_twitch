@@ -1,6 +1,14 @@
 defmodule Elirc.Handler.Login do
-  @moduledoc """
+  alias Beaker.Counter
+  alias Beaker.TimeSeries
+
+  @doc """
+  Starts the login handler
+
+  ## Example
+  Login.start_link(ExIrc.Client, [{"#test_channel", %{noisy?: true}])
   """
+  @spec start_link(client :: pid, channels :: list()) :: {:ok, pid} | {:error, term}
   def start_link(client, channels) do
     GenServer.start_link(__MODULE__, [client, channels])
   end
@@ -17,37 +25,116 @@ defmodule Elirc.Handler.Login do
 
   @doc """
   Request the CAP (capability) on the server
+
+  ## Example
+  cap_request(ExIrc.Client, ':twitch.tv/membership')
   """
   def cap_request(client, cap) do
     ExIrc.Client.cmd(client, ['CAP ', 'REQ ', cap])
   end
 
+  @doc """
+  Handles logged_in requests
+  """
   def handle_info(:logged_in, state = {client, channels}) do
     debug "Logged in to server"
 
-    # Request capabilities before joining the channel
-    [':twitch.tv/membership',
-      ':twitch.tv/commands']
-     |> Enum.each(fn (cap) -> cap_request(client, cap) end)
+    request_twitch_capabilities(client)
+      |> join(channels)
 
-    channels |> Enum.map(&join(&1, client))
     {:noreply, state}
   end
 
-  def join(channel, client) do
+  @doc """
+  Request twitch for capabilities
+  """
+  def request_twitch_capabilities(client) do
+    # Request capabilities before joining the channel
+    [':twitch.tv/membership',
+      ':twitch.tv/commands']
+      |> Enum.each(fn (cap) -> cap_request(client, cap) end)
+  end
+
+  @doc """
+  Join a list of channels
+
+  ## Examples
+  join(ExIrc.Client, [{"#rockerboo", %{noisy?: true}},
+    {"#dansgaming", %{noisy?: false}}])
+  """
+  def join(client, channels) when is_list(channels) do
+    channels
+      |> Enum.map(&join(&1, client))
+
+    client
+  end
+
+  @doc """
+  Joins a channel, and starts the Elirc.Channel
+
+  ## Examples
+  join({"#rockerboo", %{noisy?: true}}, Exirc.Client)
+  """
+  def join(client, {channel, channel_details}) do
     ExIrc.Client.join(client, channel)
 
     Elirc.Channel.Supervisor.new_channel(client, channel)
 
-    start_timeout(client, channel)
+    start_recurring(client, channel)
+
+    start_metrics(channel)
   end
 
-  def start_timeout(client, channel) do
+  @doc """
+  Start the recurring messages for the channel
+
+  ## Example
+  start_recurring(ExIrc.Client, "#test_channel")
+  """
+  def start_recurring(client, channel) do
     msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
-    Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.send_say(msg, channel, client) end)
+    Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.say(msg, channel, client) end)
   end
 
-  # Catch-all for messages you don't care about
+  @doc """
+  Start the recurring messages for the channel
+
+  ## Example
+  start_recurring(ExIrc.Client, "#test_channel")
+  """
+  def start_metrics(channel) do
+    # Every 1 min, flush channel metric count
+    Quantum.add_job("*/1 * * * *", fn ->
+      Elirc.Handler.Login.process_metrics(channel)
+    end)
+  end
+
+  @doc """
+  Process metrics for the channel
+
+  ## Example
+  process_metrics("#test_channel")
+  """
+  def process_metrics(channel) do
+    debug "Processing Metrics for #{channel}"
+
+    count = Counter.get(channel)
+
+    # Counter.get(channel)
+    #   |> TimeSeries.sample(channel)
+    #   |> Counter.set(0)
+
+    TimeSeries.sample(channel, count)
+
+    Beaker.TimeSeries.get(channel)
+      |> IO.inspect
+
+    Counter.set(channel, 0)
+  end
+
+  @doc """
+  Drops unknown messages
+  """
   def handle_info(_msg, state) do
     {:noreply, state}
   end

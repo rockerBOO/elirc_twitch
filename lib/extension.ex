@@ -14,6 +14,9 @@ defmodule Elirc.Extension do
   end
 
   def init([]) do
+    IO.puts "Extension process"
+    IO.inspect self
+
     {:ok, %State{}}
   end
 
@@ -34,13 +37,15 @@ defmodule Elirc.Extension do
     :gen_server.call(ext, {:add_handler, pid})
   end
 
-  def handle_info(info, state) do
+  def handle_info(info, state ) do
     # send_event(info, state)
     {:noreply, state}
   end
 
   def handle_call(:start, _from, state) do
     start_extensions()
+
+    {:reply, :ok, state}
   end
 
   def handle_call({:add_handler, pid}, _from, state) do

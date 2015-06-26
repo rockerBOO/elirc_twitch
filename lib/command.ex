@@ -5,6 +5,11 @@ defmodule Elirc.Command do
   alias RestTwitch.Follows.Follow
   alias Elirc.Message
 
+  @doc """
+
+  ## Examples
+  start_link(ExIrc.Client, "TWITCH_ACCESS_TOKEN", "#test_channel")
+  """
 	def start_link(client, token, channel) do
     GenServer.start_link(__MODULE__, [client, token, channel], [])
 	end
@@ -13,6 +18,12 @@ defmodule Elirc.Command do
     {:ok, %{client: client, token: token, channel: channel}}
   end
 
+  @doc """
+  Runs the command on the CommandPool
+
+  ## Example
+  run("follower", "#test_channel")
+  """
   def run(cmd, channel) do
     pool_name = Elirc.CommandPool.Supervisor.pool_name()
 
@@ -24,6 +35,12 @@ defmodule Elirc.Command do
     )
   end
 
+  @doc """
+  Process and route command to action
+
+  ## Example
+  cmd("follower", "#test_channel", "TWITCH_ACCESS_TOKEN", ExIrc.Client)
+  """
   def cmd(cmd, channel, token, client) do
     case String.split(cmd) do
       ["follower"] -> Message.say(get_last_follower(), channel, client)
@@ -34,6 +51,12 @@ defmodule Elirc.Command do
     end
   end
 
+  @doc """
+  Process emote details from the emoticon list
+
+  ## Example
+  emote("danBad")
+  """
   def emote(emote) do
     IO.inspect emote
 
@@ -45,7 +68,7 @@ defmodule Elirc.Command do
   @doc """
   Gets the last follower to the channel
 
-  ## Examples
+  ## Example
       iex> Elirc.Bot.Command.get_last_follower()
   """
   def get_last_follower() do
@@ -58,6 +81,12 @@ defmodule Elirc.Command do
       |> Map.fetch! "display_name"
   end
 
+  @doc """
+  Gets the last followed channel
+
+  ## Example
+  get_last_followed("TWITCH_ACCESS_TOKEN")
+  """
   def get_last_followed(token) do
     %{"display_name" => display_name} =
       Users.streams_following(token, [limit: 1])
@@ -68,6 +97,12 @@ defmodule Elirc.Command do
     display_name
   end
 
+  @doc """
+  Get the last track played on last.fm
+
+  ## Example
+  get_last_track()
+  """
   def get_last_track() do
     url = "http://ws.audioscrobbler.com/1.0/user/rockerboo/recenttracks.rss"
     case HTTPoison.get(url) do

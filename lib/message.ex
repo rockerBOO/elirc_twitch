@@ -5,7 +5,7 @@ defmodule Elirc.Message do
               client: nil
   end
 
-  def say(message, channel, client, noisy? \\ true) do
+  def say(message, channel, client, noisy? \\ false) do
     if noisy? do
       send_say(message, channel, client)
     end
@@ -17,9 +17,19 @@ defmodule Elirc.Message do
     client |> ExIrc.Client.msg(:privmsg, channel, message)
   end
 
-  def find_emotes(message, emotes) do
-    _ = Elirc.Emoticon.find_emotes!(message, emotes)
+  def find_emotes(message, emotes, state) do
+    emotes = Elirc.Emoticon.find_emotes!(message, emotes)
 
+    emotes
+      |> Enum.each(fn (emote_metric) ->
+        Dict.keys(emote_metric)
+          |> Enum.each(fn (emote) ->
+            count = Map.fetch!(emote_metric, emote)
+              |> Map.fetch!("count")
+
+            Beaker.Counter.incr_by(emote, count)
+        end)
+      end)
     message
   end
 
@@ -50,15 +60,14 @@ defmodule Elirc.Message do
   end
 
   def found_words(found) do
-    IO.inspect found
-
     found
-      |> Enum.each(fn (word) -> process_word(word) end)
+      |> Enum.each(fn (words) -> process_words(words) end)
   end
 
-  def process_word(word) do
+  def process_words(word) do
     case word do
-      ["danThink"] -> Elirc.Sound.play("dont")
+      # ["danThink"] -> Elirc.Sound.play("dont")
+      ["danBat"] -> Elirc.Sound.play("batman")
       ["deIlluminati"] -> Elirc.Sound.play("xfiles")
       _ -> :ok
     end
