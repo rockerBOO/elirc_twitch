@@ -1,6 +1,8 @@
 Elirc
 =====
 
+![Build Status](https://travis-ci.org/rockerBOO/elirc_twitch.svg?branch=master)
+
 In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
 
 Requires Elixir

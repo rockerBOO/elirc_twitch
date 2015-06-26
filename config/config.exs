@@ -24,4 +24,4 @@ config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                     # {"#nerdist", %{noisy?: false}}
                   ]
 
-config :extend, extensions: [ConnectionExtension]
+config :extend, extensions: [Elirc.ConnectionExtension]
