@@ -21,18 +21,25 @@ defmodule Elirc.Handler.Message do
   Handles messages sent from IRC
   """
   def handle_info({:received, msg, user, channel}, state) do
-
     # Add counter increment to channel
     Beaker.Counter.incr(channel)
 
-    pool_name = Elirc.MessageQueue.Supervisor.pool_name()
-
-    :poolboy.transaction(
-      pool_name,
-      fn (pid) -> :gen_server.call(pid, {:receive_msg, [msg, user, channel]}) end
-    )
+    spawn_message_queue(msg, user, channel)
 
     {:noreply, state}
+  end
+
+  def spawn_message_queue(msg, user, channel) do
+    pool_name = Elirc.MessageQueue.Supervisor.pool_name()
+
+    spawn(fn () ->
+      :poolboy.transaction(
+        pool_name,
+        fn (pid) ->
+          :gen_server.call(pid, {:msg, [channel, user, msg]})
+        end
+      )
+    end)
   end
 
   # Catch all

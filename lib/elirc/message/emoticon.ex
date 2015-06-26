@@ -380,11 +380,11 @@ defmodule Elirc.Emoticon do
   save_sample(3, "danBad")
   """
   def save_sample(count, emoticon) do
-    debug "Processing Metrics for #{emoticon}"
+    # debug "Processing Metrics for #{emoticon}"
     TimeSeries.sample(emoticon, count)
 
     Beaker.TimeSeries.get(emoticon)
-      |> IO.inspect
+      # |> IO.inspect
 
     Counter.set(emoticon, 0)
   end

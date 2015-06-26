@@ -19,25 +19,29 @@ defmodule Elirc.Channel.Supervisor do
   ## Examples
   start_channel("#test_channel", %{noisy?: false})
   """
-  def start_channel(channel, details \\ %{}) do
-    channel_atom = Channel.to_atom(channel)
+  def start_channel(channel, opts) do
+    # IO.puts "start_channel #{channel}"
 
-    process_opts = [channel, [name: channel_atom]]
+    process_opts = [channel, opts, [name: Channel.to_atom(channel)]]
     Supervisor.start_child(Elirc.Channel.Supervisor, process_opts)
   end
 
   @doc """
   Starts a new Elirc.Channel
   """
-  def new(channel, details \\ %{}) do
-    start_channel(channel, details)
+  def new!(channel, opts \\ %{}) do
+    case new(channel, opts) do
+      {:ok, pid} -> pid
+      {:error, error} -> raise error
+    end
   end
+
+  def new(channel, opts \\ %{}), do: start_channel(channel, opts)
 
   def init([client]) do
     import Supervisor.Spec
 
     children = [
-      # Handles connection actions in IRC
       worker(Elirc.Channel, [client]),
     ]
 
