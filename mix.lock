@@ -1,4 +1,4 @@
-%{"beaker": {:git, "git://github.com/rockerboo/beaker.git", "475122ec5bfd260098617e81897a4d4b535f7328", []},
+%{"beaker": {:hex, :beaker, "0.0.3"},
   "cowboy": {:hex, :cowboy, "1.0.0"},
   "cowlib": {:hex, :cowlib, "1.0.1"},
   "edown": {:git, "git://github.com/uwiger/edown.git", "d62ec85281e451a46ba30045917c119d65b72a84", [ref: "0.5"]},

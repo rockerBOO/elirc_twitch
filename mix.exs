@@ -3,29 +3,25 @@ defmodule Elirc.Mixfile do
 
   def project do
     [app: :elirc,
-     version: "0.0.1",
-     elixir: "~> 1.0-dev",
+     version: "0.7.3",
+     elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
   end
 
-  # Type `mix help compile.app` for more information
   def application do
     [applications: [:logger, :exirc, :quantum, :porcelain, :beaker],
      mod: {Elirc.App, []}]
   end
 
-  # Type `mix help deps` for more examples and options
   defp deps do
     [
       {:cowboy, "~> 1.0"},
       {:quantum, ">= 1.2.4"},
-      {:beaker, github: "rockerboo/beaker"},
+      {:beaker, "~> 0.0.3"},
       {:porcelain, "~> 2.0"},
       {:poolboy, github: "devinus/poolboy"},
-      # {:jobs, github: "uwiger/jobs", tag: "HEAD", override: true},
-      # {:edown, ~r/.*/, [git: "git://github.com/esl/edown.git", ref: "HEAD"]}
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},
       # {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},

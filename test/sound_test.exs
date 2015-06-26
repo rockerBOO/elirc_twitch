@@ -1,7 +1,5 @@
-defmodule SoundTest do
+defmodule Elirc.SoundTest do
   use ExUnit.Case
 
-  test "test sounds" do
-    
-  end
+  doctest Elirc.Sound
 end
