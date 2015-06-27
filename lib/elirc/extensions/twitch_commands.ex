@@ -11,8 +11,6 @@ defmodule TwitchCommand do
   end
 
   def command(command, channel, client) do
-    debug
-
-    {msg, user, channel}
+    {command, channel, client}
   end
 end

@@ -129,7 +129,7 @@ defmodule Elirc.Message.Parser do
     words = ["danThink", "deIlluminati", "danBat"]
 
     String.lstrip(message)
-      |> commands(channel)
+      |> commands(channel, [client, token])
       # |> emotes(emotes, channel)
       |> words(words, channel)
       # |> users(channel, users)
@@ -143,9 +143,9 @@ defmodule Elirc.Message.Parser do
   ## Example
   find_commands("hello")
   """
-  def commands(message) do
+  def commands(message, channel, [client, token]) do
     case is_command?(message) do
-      true -> handle_command(message)
+      true -> handle_command(message, channel, [client, token])
       false -> message
     end
   end
@@ -153,7 +153,7 @@ defmodule Elirc.Message.Parser do
   def is_command?("!" <> _), do: true
   def is_command?(_), do: false
 
-  def handle_command("!" <> command, [client, token]) do
+  def handle_command("!" <> command, channel, [client, token]) do
     command
       |> Elirc.Extension.command(command, channel, client)
       |> Command.parse(command)

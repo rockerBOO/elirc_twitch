@@ -15,8 +15,4 @@ defmodule TwitchChannel do
 
     {user, channel}
   end
-
-  defp debug(msg) do
-    IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()
-  end
 end

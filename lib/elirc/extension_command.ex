@@ -6,7 +6,7 @@ defmodule Elirc.Extension.Command do
       defp sound({sound, channel}), do: {sound, channel}
 
       def handle_call({:command, {command, channel}}, _from, state) do
-        {:reply, command({user, channel}), state}
+        {:reply, command({command, channel}), state}
       end
 
       def handle_call({:sound, {sound, channel}}, _from, state) do

@@ -1,7 +1,7 @@
 defmodule Elirc.Extension.Channel do
   defmacro __using__(_) do
     quote do
-      defp joined({user, channel), do: {user, channel}
+      defp joined({user, channel}), do: {user, channel}
 
       defp parted({user, channel}), do: {user, channel}
 

@@ -15,12 +15,12 @@ defmodule Elirc.Extension.Message do
         {:reply, message({msg, user, channel}), state}
       end
 
-      def handle_call({:emote, {emotes}}, _from, state) do
-        {:reply, words({msg, user, channel}), state}
+      def handle_call({:emote, {emotes, channel}}, _from, state) do
+        {:reply, emotes({emotes, channel}), state}
       end
 
-      def handle_call({:words, {words}}, _from, state) do
-        {:reply, words(words), state}
+      def handle_call({:words, {words, channel}}, _from, state) do
+        {:reply, words({words, channel}), state}
       end
 
       def handle_call({:spam, {message, channel}}, _from, state) do
