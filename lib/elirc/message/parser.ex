@@ -128,14 +128,11 @@ defmodule Elirc.Message.Parser do
     emotes = Emoticon.get_all!()
     words = ["danThink", "deIlluminati", "danBat"]
 
-    message
-      |> commands(channel)
-      |> Command.route(channel, [client, token])
-
-    message
+    String.lstrip(message)
+      |> commands(channel, [client, token])
       # |> emotes(emotes, channel)
       |> words(words, channel)
-      # |> find_users(channel, users)
+      # |> users(channel, users)
       |> links(channel)
       |> spam(channel)
   end
@@ -146,11 +143,23 @@ defmodule Elirc.Message.Parser do
   ## Example
   find_commands("hello")
   """
-  def commands(message, channel) do
-    case String.lstrip(message) do
-      "!" <> command -> Command.parse(command)
-      _ -> nil
+  def commands(message, channel, [client, token]) do
+    case is_command?(message) do
+      true -> handle_command(message, channel, [client, token])
+      false -> message
     end
+  end
+
+  def is_command?("!" <> _), do: true
+  def is_command?(_), do: false
+
+  def handle_command("!" <> command, channel, [client, token]) do
+    command
+      |> Elirc.Extension.command(command, channel, client)
+      |> Command.parse(command)
+      |> Command.route(channel, [client, token])
+
+    ""
   end
 
   @doc """

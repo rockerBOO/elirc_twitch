@@ -16,7 +16,7 @@ config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                     # {"#ogaminglol", %{noisy?: false}},
                     # {"#castro_1021", %{noisy?: false}},
                     # {"#reynad27", %{noisy?: false}},
-                    # {"#trumpsc", %{noisy?: false}},
+                    # {"#noobs2ninjas", %{noisy?: false}},
                     # {"#esportal", %{noisy?: false}},
                     # {"#smitegame", %{noisy?: false}},
                     # {"#startladder_hs_ru", %{noisy?: false}},
@@ -24,4 +24,6 @@ config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
                     # {"#nerdist", %{noisy?: false}}
                   ]
 
-config :extend, extensions: [Elirc.ConnectionExtension]
+config :extensions, message: [TwitchExtension],
+                    command: [TwitchCommand],
+                    channel: [TwitchChannel]
