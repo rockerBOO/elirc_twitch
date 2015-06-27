@@ -61,6 +61,9 @@ defmodule Elirc.Channel do
   """
   def handle_call({:remove, user}, _from, state) do
     debug "Removing #{user} from #{state.channel}"
+
+    Elirc.Extension.remove_user(user)
+
     {:reply, :ok, remove_user_from_state(user, state)}
   end
 
@@ -69,6 +72,9 @@ defmodule Elirc.Channel do
   """
   def handle_cast({:remove, user}, state) do
     debug "Removing #{user} from #{state.channel}"
+
+    Elirc.Extension.remove_user(user)
+
     {:reply, :ok, remove_user_from_state(user, state)}
   end
 
@@ -77,6 +83,9 @@ defmodule Elirc.Channel do
   """
   def handle_call({:add, user}, _from, state) do
     debug "Adding #{user} to #{state.channel}"
+
+    Elirc.Extension.add_user(user)
+
     {:reply, :ok, add_user_to_state(user, state)}
   end
 
@@ -85,6 +94,9 @@ defmodule Elirc.Channel do
   """
   def handle_cast({:add, user}, state) do
     debug "Adding #{user} to #{state.channel}"
+
+    Elirc.Extension.add_user(user)
+
     {:reply, :ok, add_user_to_state(user, state)}
   end
 

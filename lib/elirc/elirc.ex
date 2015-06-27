@@ -26,8 +26,10 @@ defmodule Elirc do
 
     # {:ok, whisper_client} = ExIrc.Client.start_link()
 
-    # whisper_server = %Elirc.Handler.Connection.State{
-    #   host: "199.9.248.232"
+    # whisper_server = %Elirc.Handler.Whisper.State{
+    #   host: "199.9.253.120",
+    #   channel: "_elircbot_1435353964015",
+    #   port: 80
     # }
 
     ## Extensions
@@ -45,7 +47,7 @@ defmodule Elirc do
   	children = [
       # Handles connection actions in IRC
       worker(Elirc.Handler.Connection, [client]),
-      # worker(Elirc.Handler.Connection, [client, whisper_server]),
+      # worker(Elirc.Handler.Whisper, [whisper_client, whisper_server]),
       # Handles Login actions
       # worker(Elirc.Handler.Login, [client, ["#rockerboo", "#jonbams", "#lirik", "#itmejp"]]),
       worker(Elirc.Handler.Login, [client, channels]),
