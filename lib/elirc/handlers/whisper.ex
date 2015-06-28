@@ -95,17 +95,6 @@ defmodule Elirc.Handler.Whisper do
   def join(client, channel) do
     ExIrc.Client.join(client, channel)
     debug "(w) Joined channel: #{channel}"
-
-    debug "Sending message to rockerboo"
-    Elirc.Message.whisper("rockerboo", "(w) Joined the channel #{channel}!")
-
-    # ChannelSupervisor.new(channel, channel_details)
-
-    # start_recurring(client, channel)
-
-    # start_metrics(channel)
-
-
   end
 
   @doc """

@@ -4,6 +4,7 @@
   "edown": {:git, "git://github.com/uwiger/edown.git", "d62ec85281e451a46ba30045917c119d65b72a84", [ref: "0.5"]},
   "exirc": {:git, "git://github.com/bitwalker/exirc.git", "194f2c2d7d8c2ffb02d5491a0c01c0b18eab57be", []},
   "exml": {:git, "git://github.com/expelledboy/exml.git", "64ad796d5637c81168c8109a53bcc300b73825ea", []},
+  "expletive": {:hex, :expletive, "0.1.4"},
   "exprintf": {:git, "git://github.com/parroty/exprintf.git", "5e71122ca40b0a9e0c8d4f57d64a8004b9d007ef", []},
   "hackney": {:hex, :hackney, "1.1.0"},
   "httpoison": {:hex, :httpoison, "0.7.0"},

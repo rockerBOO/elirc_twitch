@@ -18,13 +18,9 @@ defmodule Elirc do
 
     GenServer.cast(emoticon_pid, "fetch_and_import")
 
-    # Twitch OAuth2 Access Token
-    token = System.get_env("TWITCH_ACCESS_TOKEN")
+    {:ok, client} = ExIrc.Client.start_link([])
 
-    # {:ok, client} = ExIrc.Client.start_link([debug: true])
-    {:ok, client} = ExIrc.Client.start_link([debug: true])
-
-    {:ok, whisper_client} = ExIrc.Client.start_link([debug: true], [name: :whisper_irc])
+    {:ok, whisper_client} = ExIrc.Client.start_link([], [name: :whisper_irc])
 
     whisper_server = %Elirc.Handler.Whisper.State{
       host: "199.9.253.120",
@@ -32,25 +28,24 @@ defmodule Elirc do
       port: 80
     }
 
-    ## Extensions
+    # Extensions
     {:ok, extension} = Elirc.Extension.start_link()
 
-    # IO.puts "Extension"
-    # IO.inspect extension
-
-    # GenServer.call(extension, :start)
-    # GenServer.call(extension, {:add_handler, spawn(fn -> IO.puts "Hello" end)})
+    # Twitch OAuth2 Access Token
+    token = System.get_env("TWITCH_ACCESS_TOKEN")
 
     # Twitch Channels
     channels = Application.get_env(:twitch, :channels)
 
   	children = [
-      # Handles connection actions in IRC
+      # IRC Handlers
       worker(Elirc.Handler.Connection, [client]),
       worker(Elirc.Handler.Login, [client, channels]),
       worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Handler.Whisper, [whisper_client, whisper_server]),
+
+      # Supervisors
       worker(Elirc.Channel.Supervisor, [client]),
       worker(Elirc.MessageQueue.Supervisor, [client, token]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),

@@ -10,7 +10,7 @@ defmodule TwitchExtension do
   end
 
   def message({msg, user, channel}) do
-    IO.inspect msg
+    # IO.inspect msg
 
     {msg, user, channel}
   end

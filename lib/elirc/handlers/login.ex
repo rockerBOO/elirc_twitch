@@ -99,8 +99,8 @@ defmodule Elirc.Handler.Login do
   start_recurring(ExIrc.Client, "#test_channel")
   """
   def start_recurring(client, channel) do
-    msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
-    Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.say(msg, channel, client) end)
+    # msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
+    # Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.say(msg) end)
   end
 
   @doc """

@@ -38,16 +38,11 @@ defmodule Elirc.Command do
     )
   end
 
-  def route(nil, _, _), do: :ok
+  def route(nil, _, _, _), do: :ok
 
-  def route({action, {user, value}}, channel, [client, token]) do
+  def route({action, value}, channel, user, [client, token]) do
     case action do
       :reply -> Message.whisper(user, value)
-    end
-  end
-
-  def route({action, value}, channel, [client, token]) do
-    case action do
       :say -> Message.say(value, channel, [client, token])
       :sound -> Sound.play(value)
       :cmd -> cmd(value, channel, [client, token])
@@ -148,10 +143,14 @@ defmodule Elirc.Command do
       ["bot"] -> ["elirc"]
       ["glacier"] -> ["theme"]
       ["xfile"] -> ["xfiles"]
+      ["x-file"] -> ["xfiles"]
+      ["x-files"] -> ["xfiles"]
       ["h"] -> ["help"]
       ["coming"] -> ["getsmeeverytime"]
       ["wtf"] -> ["talkingabout"]
       ["beatit"] -> ["beat_it"]
+      ["comands"] -> ["commands"]
+      ["donot"] -> ["do_not"]
       ["waithere"] -> ["waitthere"]
       ["63"] -> ["speedlimit"]
       ["65"] -> ["speedlimit"]
@@ -196,11 +195,18 @@ defmodule Elirc.Command do
       ["stupid"] -> {:sound, "stupid"}
       ["yadda"] -> {:sound, "yadda"}
       ["batman"] -> {:sound, "batman"}
+      ["gigawatts"] -> {:sound, "gigawatts"}
+      ["cando90"] -> {:sound, "cando90"}
+      ["intothefuture"] -> {:sound, "intothefuture"}
+      ["yourmom"] -> {:sound, "yourmom"}
+      ["likeaglove"] -> {:sound, "likeaglove"}
+      ["loser"] -> {:sound, "loser"}
+      ["do_not"] -> {:sound, "do_not"}
       ["follower"] -> {:cmd, "follower"}
       ["followed"] -> {:cmd, "followed"}
       ["elixir"] -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
       ["elirc"] -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
-      ["soundlist"] -> {:say, "injuriesemotional, getsmeeverytime, talkingabout, beat_it, stupid, yadda, engage, dont, speedlimit, yeahsure, xfiles, wedidit, toy, waitthere, bealright, whatsthat"}
+      ["soundlist"] -> {:say, "!(injuriesemotional, getsmeeverytime, talkingabout, beat_it, stupid, yadda, engage, dont, speedlimit, yeahsure, xfiles, wedidit, toy, waitthere, bealright, whatsthat, injuriesemotional, getsmeeverytime, talkingabout,m awkward, beat_it, stupid, yadda, gigawatts, cando90, intothefuture, yourmom, likeaglove, loser, do_not)"}
       ["whatamidoing"] -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
       ["itsnotaboutsyntax"] -> {:say, "http://devintorr.es/blog/2013/06/11/elixir-its-not-about-syntax/"}
       ["excitement"] -> {:say, "http://devintorr.es/blog/2013/01/22/the-excitement-of-elixir/"}

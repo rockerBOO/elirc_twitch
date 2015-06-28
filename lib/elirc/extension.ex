@@ -62,7 +62,7 @@ defmodule Elirc.Extension do
   end
 
   def message({msg, user, channel}), do: proxy(:message, {:msg, {msg, user, channel}})
-  def command(command, {channel, [client, token]}), do: proxy(:command, {:cmd, {command, channel, [client, token]}})
+  def command(command, channel, user, [client, token]), do: proxy(:command, {:cmd, {command, channel, user, [client, token]}})
   def joined(user, channel), do: proxy(:channel, {:joined, {user, channel}})
   def parted(user, channel), do: proxy(:channel, {:parted, {user, channel}})
 
