@@ -10,7 +10,7 @@ defmodule TwitchCommand do
     {:ok, [ext]}
   end
 
-  def command(command, channel, client) do
-    {command, channel, client}
+  def command({command, channel, client}) do
+    command
   end
 end

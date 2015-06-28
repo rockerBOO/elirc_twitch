@@ -55,15 +55,16 @@ defmodule Elirc.Extension do
   """
   def proxy(type, msg) do
     get_extensions(type)
-      |> Enum.each(fn (extension) ->
+      |> Enum.map(fn (extension) ->
           GenServer.call(extension, msg)
         end)
+      |> Enum.fetch!(0)
   end
 
-  def message({msg, user, channel}), do: proxy(:message, {msg, user, channel})
-  def command(command), do: proxy(:command, {:cmd, command})
-  def joined(user, channel), do: proxy(:channel, {:joined, user})
-  def parted(user), do: proxy(:channel, {:parted, user})
+  def message({msg, user, channel}), do: proxy(:message, {:msg, {msg, user, channel}})
+  def command(command, {channel, [client, token]}), do: proxy(:command, {:cmd, {command, channel, [client, token]}})
+  def joined(user, channel), do: proxy(:channel, {:joined, {user, channel}})
+  def parted(user, channel), do: proxy(:channel, {:parted, {user, channel}})
 
   defp debug(msg) do
     IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()

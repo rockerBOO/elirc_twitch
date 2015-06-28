@@ -1,5 +1,5 @@
 defmodule TwitchChannel do
-  use Elirc.Extension.Command
+  use Elirc.Extension.Channel
 
   def start_link(ext) do
     GenServer.start_link(__MODULE__, [ext],

@@ -40,6 +40,12 @@ defmodule Elirc.Command do
 
   def route(nil, _, _), do: :ok
 
+  def route({action, {user, value}}, channel, [client, token]) do
+    case action do
+      :reply -> Message.whisper(user, value)
+    end
+  end
+
   def route({action, value}, channel, [client, token]) do
     case action do
       :say -> Message.say(value, channel, [client, token])
@@ -87,7 +93,7 @@ defmodule Elirc.Command do
   """
   def get_last_follower() do
     opts = [direction: "desc", limit: 1]
-    %Follow{user: user} =
+  %Follow{user: user} =
       Channels.followers("rockerboo", opts)
       |> Enum.fetch! 0
 

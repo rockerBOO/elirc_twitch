@@ -22,21 +22,21 @@ defmodule Elirc do
     token = System.get_env("TWITCH_ACCESS_TOKEN")
 
     # {:ok, client} = ExIrc.Client.start_link([debug: true])
-    {:ok, client} = ExIrc.Client.start_link()
+    {:ok, client} = ExIrc.Client.start_link([debug: true])
 
-    # {:ok, whisper_client} = ExIrc.Client.start_link()
+    {:ok, whisper_client} = ExIrc.Client.start_link([debug: true], [name: :whisper_irc])
 
-    # whisper_server = %Elirc.Handler.Whisper.State{
-    #   host: "199.9.253.120",
-    #   channel: "_elircbot_1435353964015",
-    #   port: 80
-    # }
+    whisper_server = %Elirc.Handler.Whisper.State{
+      host: "199.9.253.120",
+      channel: "#_elircbot_1435353964015",
+      port: 80
+    }
 
     ## Extensions
     {:ok, extension} = Elirc.Extension.start_link()
 
-    IO.puts "Extension"
-    IO.inspect extension
+    # IO.puts "Extension"
+    # IO.inspect extension
 
     # GenServer.call(extension, :start)
     # GenServer.call(extension, {:add_handler, spawn(fn -> IO.puts "Hello" end)})
@@ -47,13 +47,10 @@ defmodule Elirc do
   	children = [
       # Handles connection actions in IRC
       worker(Elirc.Handler.Connection, [client]),
-      # worker(Elirc.Handler.Whisper, [whisper_client, whisper_server]),
-      # Handles Login actions
-      # worker(Elirc.Handler.Login, [client, ["#rockerboo", "#jonbams", "#lirik", "#itmejp"]]),
       worker(Elirc.Handler.Login, [client, channels]),
-      # worker(Elirc.Handler.Join, [client]),
       worker(Elirc.Handler.Message, [client, token]),
       worker(Elirc.Handler.Names, [client]),
+      worker(Elirc.Handler.Whisper, [whisper_client, whisper_server]),
       worker(Elirc.Channel.Supervisor, [client]),
       worker(Elirc.MessageQueue.Supervisor, [client, token]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),

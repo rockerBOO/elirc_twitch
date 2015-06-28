@@ -26,7 +26,7 @@ defmodule Elirc.Handler.Message do
 
     spawn_message_queue(msg, user, channel)
 
-    Elirc.Extension.message({:msg, msg, user, channel})
+    Elirc.Extension.message({msg, user, channel})
 
     {:noreply, state}
   end

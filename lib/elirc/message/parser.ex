@@ -155,8 +155,8 @@ defmodule Elirc.Message.Parser do
 
   def handle_command("!" <> command, channel, [client, token]) do
     command
-      |> Elirc.Extension.command(command, channel, client)
-      |> Command.parse(command)
+      |> Elirc.Extension.command({channel, [client, token]})
+      |> Command.parse()
       |> Command.route(channel, [client, token])
 
     ""

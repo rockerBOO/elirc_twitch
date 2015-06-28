@@ -27,7 +27,7 @@ defmodule Elirc.Extension.Message do
         {:reply, spam({message, channel}), state}
       end
 
-      def handle_call({:command, {msg, user, channel}}, _from, state) do
+      def handle_call({:cmd, {msg, user, channel}}, _from, state) do
         {:reply, message({msg, user, channel}), state}
       end
 
