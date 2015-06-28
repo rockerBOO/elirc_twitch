@@ -30,14 +30,14 @@ defmodule Elirc.Handler.Names do
 
   # Handles when a user has joined a channel
   def handle_info({:joined, channel, user}, state) do
-    Channel.remove_user(channel, user)
+    Channel.add_user(channel, user)
 
     {:noreply, state}
   end
 
   # Handles when a user leaves a channel
   def handle_info({:parted, channel, user}, state) do
-    Channel.add_user(channel, user)
+    Channel.remove_user(channel, user)
 
     {:noreply, state}
   end

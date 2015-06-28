@@ -38,7 +38,7 @@ defmodule Elirc.Handler.Login do
   Handles logged_in requests
   """
   def handle_info(:logged_in, state = {client, channels}) do
-    debug "Logged in to server"
+    debug "Logged in to the server"
 
     request_twitch_capabilities(client)
       |> join(channels)
@@ -52,7 +52,9 @@ defmodule Elirc.Handler.Login do
   def request_twitch_capabilities(client) do
     # Request capabilities before joining the channel
     [':twitch.tv/membership',
-      ':twitch.tv/commands']
+      ':twitch.tv/commands',
+      # ':twitch.tv/tags'
+    ]
       |> Enum.each(fn (cap) -> cap_request(client, cap) end)
 
     client
@@ -97,8 +99,8 @@ defmodule Elirc.Handler.Login do
   start_recurring(ExIrc.Client, "#test_channel")
   """
   def start_recurring(client, channel) do
-    msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
-    Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.say(msg, channel, client) end)
+    # msg = "Hello! I am a human trapped in an IRC Channel. Please send treats. Thanks, sweetly."
+    # Quantum.add_job("*/30 * * * *", fn -> Elirc.Message.say(msg) end)
   end
 
   @doc """

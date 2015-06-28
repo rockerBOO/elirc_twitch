@@ -25,14 +25,22 @@ defmodule Elirc.Message.Parser do
   """
   def save_emote_metrics(found_emotes) do
     found_emotes
-      |> Enum.each(fn (emote_metric) ->
-        Dict.keys(emote_metric)
-          |> Enum.each(fn (emote) ->
-            count = Map.fetch!(emote_metric, emote)
-              |> Map.fetch!("count")
+      |> Enum.each(&save_emote_metric(&1))
+  end
 
-            Beaker.Counter.incr_by(emote, count)
-        end)
+  @doc """
+  Save an emote metric to Beaker
+
+  ## Examples
+  save_emote_metric({"danLove", %{"count" => 3}})
+  """
+  def save_emote_metric(emote_metric) do
+    Dict.keys(emote_metric)
+      |> Enum.each(fn (emote) ->
+        count = Map.fetch!(emote_metric, emote)
+          |> Map.fetch!("count")
+
+        Beaker.Counter.incr_by(emote, count)
       end)
   end
 
@@ -41,8 +49,10 @@ defmodule Elirc.Message.Parser do
 
   ## Example
   find_spam("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
+  find_spam("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "#test_channel", "rockerboo")
   """
-  def spam(message, channel) do
+  def spam(message, channel \\ "", user \\ "") do
     Elirc.Spam.find(message)
 
     message
@@ -53,8 +63,10 @@ defmodule Elirc.Message.Parser do
 
   ## Example
   find_links("links in the message http://google.com")
+
+  find_links("links in the message http://google.com", "#test_channel", "rockerboo")
   """
-  def links(message, channel) do
+  def links(message, channel \\ "", user \\ "") do
     Elirc.Link.find(message)
 
     message
@@ -67,7 +79,7 @@ defmodule Elirc.Message.Parser do
       iex> Elirc.Message.find_words("words in danBad message danThink", ["danBad", "danThink"])
       "words in danBad message danThink"
   """
-  def words(message, words, channel) do
+  def words(message, words, channel \\ "", user \\ "") do
     words
       |> Enum.map(fn (word) -> find_word(message, word) end)
       |> process_found_words(channel)
@@ -124,17 +136,17 @@ defmodule Elirc.Message.Parser do
   ## Example
   Elirc.MessagePool.Worker.process_message_for_data("danBad danBat")
   """
-  def find_data(message, channel, [client, token]) do
+  def find_data(message, channel, user, [client, token]) do
     emotes = Emoticon.get_all!()
     words = ["danThink", "deIlluminati", "danBat"]
 
     String.lstrip(message)
-      |> commands(channel, [client, token])
-      # |> emotes(emotes, channel)
-      |> words(words, channel)
-      # |> users(channel, users)
-      |> links(channel)
-      |> spam(channel)
+      |> commands(channel, user, [client, token])
+      # |> emotes(emotes, user, channel)
+      |> words(words, channel, user)
+      # |> users(channel, user, users)
+      |> links(channel, user)
+      |> spam(channel, user)
   end
 
   @doc """
@@ -143,9 +155,9 @@ defmodule Elirc.Message.Parser do
   ## Example
   find_commands("hello")
   """
-  def commands(message, channel, [client, token]) do
+  def commands(message, channel, user, [client, token]) do
     case is_command?(message) do
-      true -> handle_command(message, channel, [client, token])
+      true -> handle_command(message, channel, user, [client, token])
       false -> message
     end
   end
@@ -153,11 +165,10 @@ defmodule Elirc.Message.Parser do
   def is_command?("!" <> _), do: true
   def is_command?(_), do: false
 
-  def handle_command("!" <> command, channel, [client, token]) do
-    command
-      |> Elirc.Extension.command(command, channel, client)
-      |> Command.parse(command)
-      |> Command.route(channel, [client, token])
+  def handle_command("!" <> command, channel, user, [client, token]) do
+    Elirc.Extension.command(command, channel, user, [client, token])
+      |> Command.parse()
+      |> Command.route(channel, user, [client, token])
 
     ""
   end
@@ -166,9 +177,9 @@ defmodule Elirc.Message.Parser do
   Find users mentioned in the message
 
   ## Example
-  find_users("words in danBad message danThink", "#test_channel", ["rockerboo", "dansgaming"])
+  find_users("words in danBad message danThink", "#test_channel", "rockerboo")
   """
-  def users(message, channel, users) do
+  def users(message, channel, user) do
     Elirc.Channel.users(channel)
 
     message

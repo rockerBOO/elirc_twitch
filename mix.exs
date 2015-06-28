@@ -29,7 +29,8 @@ defmodule Elirc.Mixfile do
       # {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
       {:exml, github: "expelledboy/exml"},
       {:timex, "~> 0.12.9"},
-      {:socket, "~> 0.2.8"}
+      {:socket, "~> 0.2.8"},
+      {:expletive, "~> 0.1.0"}
     ]
   end
 end

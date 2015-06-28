@@ -1,12 +1,12 @@
 defmodule Elirc.Extension.Command do
   defmacro __using__(_) do
     quote do
-      defp command({command, channel}), do: {command, channel}
+      defp command({command, channel, user, [client, token]}), do: {command, channel, user, [client, token]}
 
       defp sound({sound, channel}), do: {sound, channel}
 
-      def handle_call({:command, {command, channel}}, _from, state) do
-        {:reply, command({command, channel}), state}
+      def handle_call({:cmd, {command, channel, user, [client, token]}}, _from, state) do
+        {:reply, command({command, channel, user, [client, token]}), state}
       end
 
       def handle_call({:sound, {sound, channel}}, _from, state) do

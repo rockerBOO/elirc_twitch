@@ -22,7 +22,7 @@ defmodule Elirc.MessagePool.Worker do
   def handle_call({:msg, [channel, user, message]}, _from, state) do
     # IO.inspect "Processing message on:"
     # IO.inspect self
-    {:reply, MessageParser.find_data(message, channel, state), state}
+    {:reply, MessageParser.find_data(message, channel, user, state), state}
   end
 
   def handle_info(reason, state) do

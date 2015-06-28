@@ -24,11 +24,17 @@ defmodule Elirc.Message do
   end
 
   def noisy?(channel) do
+    true
     opts = Elirc.Channel.pid(channel)
       |> Elirc.Channel.state()
       |> Map.fetch!(:opts)
 
     opts.noisy?
+  end
+
+  def whisper(user, message) do
+    IO.puts "Saying to user " <> user <> " message " <> message
+    :whisper_irc |> ExIrc.Client.cmd("PRIVMSG #jtv :/w " <> user <> " " <> message)
   end
 
   @doc """
@@ -40,6 +46,9 @@ defmodule Elirc.Message do
   def send_say(message, channel, client) do
     debug "Say (#{channel}): #{message}"
 
+    # privmsg #jtv .w %recipient $1-
+
+    # client |> ExIrc.Client.cmd("PRIVMSG .w " <> user <> " :" message)
     client |> ExIrc.Client.msg(:privmsg, channel, message)
   end
 

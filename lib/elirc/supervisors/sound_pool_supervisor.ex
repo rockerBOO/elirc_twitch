@@ -30,6 +30,13 @@ defmodule Elirc.SoundPool.Supervisor do
       beat_it: "/home/rockerboo/Music/movie_clips/beat_it.mp3",
       stupid: "/home/rockerboo/Music/movie_clips/stupid.mp3",
       yadda: "/home/rockerboo/Music/movie_clips/yadda.mp3",
+      gigawatts: "/home/rockerboo/Music/movie_clips/121gigawatts.mp3",
+      cando90: "/home/rockerboo/Music/movie_clips/cando90.mp3",
+      intothefuture: "/home/rockerboo/Music/movie_clips/intothefuture2.mp3",
+      yourmom: "/home/rockerboo/Music/movie_clips/yourmom.mp3",
+      likeaglove: "/home/rockerboo/Music/movie_clips/likaglv.mp3",
+      loser: "/home/rockerboo/Music/movie_clips/loser.mp3",
+      do_not: "/home/rockerboo/Music/movie_clips/do_not.mp3",
     }
 
     children = [
