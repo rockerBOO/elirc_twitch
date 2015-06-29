@@ -19,7 +19,7 @@
   "porcelain": {:hex, :porcelain, "2.0.0"},
   "quantum": {:hex, :quantum, "1.2.4"},
   "ranch": {:hex, :ranch, "1.0.0"},
-  "rest_twitch": {:git, "git@github.com:rockerBOO/rest_twitch.git", "5f432001112c2434afa327f19f0bb24928880046", []},
+  "rest_twitch": {:git, "git://github.com/rockerBOO/rest_twitch.git", "5f432001112c2434afa327f19f0bb24928880046", []},
   "socket": {:hex, :socket, "0.2.8"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
   "timex": {:hex, :timex, "0.12.9"}}
