@@ -63,8 +63,8 @@ defmodule Elirc.Command do
   Route to alias to true command
 
   ## Example
-      iex> Elirc.Command._alias(["bot"])
-      ["elirc"]
+      iex> Elirc.Command._alias("bot", %{"bot" => "elirc"})
+      "elirc"
   """
   def _alias(command, aliases) do
     case fetch_alias(command, aliases) do
@@ -94,16 +94,16 @@ defmodule Elirc.Command do
   Parses a command for the command routing
 
   ## Examples
-      iex> Elirc.Command.parse("hello", %{"hello" => ["say", "hello"]})
-      {:say, "Hello"}
+      iex> Elirc.Command.parse("hello", %{"hello" => ["say", "Hello"]}, %{})
+      ["say", "Hello"]
 
-      iex> Elirc.Command.parse("engage")
-      {:sound, "engage"}
+      iex> Elirc.Command.parse("engage", %{"engage" => ["sound", "engage"]}, %{})
+      ["sound", "engage"]
 
-      iex> Elirc.Command.parse("follower")
-      {:cmd, "follower"}
+      iex> Elirc.Command.parse("follower", %{"follower" => ["cmd", "follower"]}, %{})
+      ["cmd", "follower"]
   """
-  def parse(command, commands, aliases) do
+  def parse(command, commands, aliases \\ %{}) do
     # IO.puts "Parsing command #{command}"
 
     _alias(command, aliases)
