@@ -11,12 +11,9 @@ defmodule Elirc.SoundPool.Supervisor do
       {:max_overflow, 0}
     ]
 
-    file_path = "data/channels/rockerboo/rockerboo.sounds.json"
-    file = File.read!(file_path)
-
-    sound_list = Poison.decode!(file)
-
-    IO.inspect sound_list
+    sound_list = "data/channels/rockerboo/rockerboo.sounds.json"
+      |> File.read!()
+      |> Poison.decode!()
 
     children = [
       :poolboy.child_spec(pool_name(), poolboy_config, sound_list)

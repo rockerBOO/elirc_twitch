@@ -1,22 +1,22 @@
-use Mix.Config
+ use Mix.Config
 
 config :twitch,
   access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
   username: System.get_env("TWITCH_USERNAME"),
   channels: [
     {"#rockerboo", %{noisy?: true}},
-    {"#capcomfighters", %{noisy?: false}},
+    {"#nl_kripp", %{noisy?: false}},
     {"#arteezy", %{noisy?: false}},
-    {"#trumpsc", %{noisy?: false}},
+    {"#bestrivenna", %{noisy?: false}},
     {"#trick2g", %{noisy?: false}},
-    {"#summit1g", %{noisy?: false}},
-    {"#stonedyooda", %{noisy?: false}},
-    {"#sodapoppin", %{noisy?: false}},
-    {"#syndicate", %{noisy?: false}},
-    {"#scarra", %{noisy?: false}},
-    {"#sing_sing", %{noisy?: false}},
-    {"#tsm_wildturtle", %{noisy?: false}},
-    {"#joshog", %{noisy?: false}},
+    {"#fairlight_excalibur", %{noisy?: false}},
+    {"#quaslol", %{noisy?: false}},
+    {"#europeanspeedstersassembly", %{noisy?: false}},
+    {"#hero", %{noisy?: false}},
+    {"#sjow", %{noisy?: false}},
+    {"#steel_tv", %{noisy?: false}},
+    {"#richard_hammer", %{noisy?: false}},
+    {"#gratis150ml", %{noisy?: false}},
   ]
 
 config :extensions,

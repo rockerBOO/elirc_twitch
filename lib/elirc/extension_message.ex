@@ -1,7 +1,7 @@
 defmodule Elirc.Extension.Message do
   defmacro __using__(_) do
     quote do
-      defp message({msg, user, channel}), do: {msg, user, channel}
+      defp message({msg, user, channel}), do: msg
 
       defp emotes(emotes), do: emotes
 

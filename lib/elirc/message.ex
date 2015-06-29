@@ -5,19 +5,17 @@ defmodule Elirc.Message do
               client: nil
   end
 
-  def say(message, channel) do
-    GenServer.start_link(message, channel)
-  end
-
   @doc """
   Say message to channel
 
   ## Example
   say("Hello", "#test_channel", ExIrc.Client, true)
   """
-  def say(message, channel, [client, _token]) do
+  def say(message, channel, config) do
+    # debug "Saying #{message} to #{channel}"
+
     if noisy?(channel) do
-      send_say(message, channel, client)
+      send_say(message, channel, config.client)
     else
       debug "Silenced... Say (#{channel}): #{message}"
     end
@@ -33,7 +31,7 @@ defmodule Elirc.Message do
   end
 
   def whisper(user, message) do
-    IO.puts "Saying to user " <> user <> " message " <> message
+    # IO.puts "Saying to user " <> user <> " message " <> message
     :whisper_irc |> ExIrc.Client.cmd("PRIVMSG #jtv :/w " <> user <> " " <> message)
   end
 
@@ -45,8 +43,6 @@ defmodule Elirc.Message do
   """
   def send_say(message, channel, client) do
     debug "Say (#{channel}): #{message}"
-
-    # privmsg #jtv .w %recipient $1-
 
     # client |> ExIrc.Client.cmd("PRIVMSG .w " <> user <> " :" message)
     client |> ExIrc.Client.msg(:privmsg, channel, message)

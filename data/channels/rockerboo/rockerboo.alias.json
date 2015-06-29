@@ -17,4 +17,6 @@
       "danThink": "dont",
       "cmd": "commands",
       "cmdlist": "commands",
+      "soundslist": "soundlist",
+      "sounds": "soundlist"
 }

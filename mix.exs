@@ -25,7 +25,7 @@ defmodule Elirc.Mixfile do
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},
       # {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
-      {:rest_twitch, github: "rockerboo/rest_twitch"},
+      {:rest_twitch, git: "git@github.com:rockerBOO/rest_twitch.git"},
       # {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
       {:exml, github: "expelledboy/exml"},
       {:timex, "~> 0.12.9"},

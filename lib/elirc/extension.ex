@@ -61,8 +61,14 @@ defmodule Elirc.Extension do
       |> Enum.fetch!(0)
   end
 
-  def message({msg, user, channel}), do: proxy(:message, {:msg, {msg, user, channel}})
-  def command(command, channel, user, [client, token]), do: proxy(:command, {:cmd, {command, channel, user, [client, token]}})
+  def message({msg, user, channel}) do
+    proxy(:message, {:msg, {msg, user, channel}})
+  end
+
+  def command(command, channel, user, config) do
+    proxy(:command, {:cmd, {command, channel, user, config}})
+  end
+
   def joined(user, channel), do: proxy(:channel, {:joined, {user, channel}})
   def parted(user, channel), do: proxy(:channel, {:parted, {user, channel}})
 

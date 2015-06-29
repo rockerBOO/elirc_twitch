@@ -32,6 +32,8 @@ defmodule Elirc.Handler.Whisper do
 
     debug "(w) Logging into #{state.nick}"
 
+    IO.inspect state
+
     # Login to Twitch IRC
     ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick,
       state.user, state.name

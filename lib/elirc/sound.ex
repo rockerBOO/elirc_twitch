@@ -50,7 +50,8 @@ defmodule Elirc.Sound do
   """
   def play_mp3(file) do
     debug "Playing " <> file
-    Porcelain.exec("mpg123", ["-q", file])
+    # Porcelain.exec("mpg123", ["-q", file])
+    result = Porcelain.exec("mpg123", ["-q", file])
   end
 
   @doc """
