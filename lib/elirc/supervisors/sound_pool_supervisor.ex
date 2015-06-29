@@ -11,33 +11,12 @@ defmodule Elirc.SoundPool.Supervisor do
       {:max_overflow, 0}
     ]
 
-    sound_list = %{
-      batman: "/home/rockerboo/Music/movie_clips/batman.mp3",
-      engage: "/home/rockerboo/Music/movie_clips/engag.mp3",
-      dont: "/home/rockerboo/Music/movie_clips/khdont.mp3",
-      speedlimit: "/home/rockerboo/Music/movie_clips/speedlimit.mp3",
-      yeahsure: "/home/rockerboo/Music/movie_clips/yeahsure.mp3",
-      xfiles: "/home/rockerboo/Music/movie_clips/xfiles.mp3",
-      wedidit: "/home/rockerboo/Music/movie_clips/wedidit.mp3",
-      toy: "/home/rockerboo/Music/movie_clips/toy.mp3",
-      waitthere: "/home/rockerboo/Music/movie_clips/waithere.mp3",
-      bealright: "/home/rockerboo/Music/movie_clips/bealright.mp3",
-      whatsthat: "/home/rockerboo/Music/movie_clips/whatsthat.mp3",
-      injuriesemotional: "/home/rockerboo/Music/movie_clips/injuriesemotional.mp3",
-      getsmeeverytime: "/home/rockerboo/Music/movie_clips/getsmeeverytime.mp3",
-      talkingabout: "/home/rockerboo/Music/movie_clips/talkingabout.mp3",
-      awkward: "/home/rockerboo/Music/movie_clips/awkward.mp3",
-      beat_it: "/home/rockerboo/Music/movie_clips/beat_it.mp3",
-      stupid: "/home/rockerboo/Music/movie_clips/stupid.mp3",
-      yadda: "/home/rockerboo/Music/movie_clips/yadda.mp3",
-      gigawatts: "/home/rockerboo/Music/movie_clips/121gigawatts.mp3",
-      cando90: "/home/rockerboo/Music/movie_clips/cando90.mp3",
-      intothefuture: "/home/rockerboo/Music/movie_clips/intothefuture2.mp3",
-      yourmom: "/home/rockerboo/Music/movie_clips/yourmom.mp3",
-      likeaglove: "/home/rockerboo/Music/movie_clips/likaglv.mp3",
-      loser: "/home/rockerboo/Music/movie_clips/loser.mp3",
-      do_not: "/home/rockerboo/Music/movie_clips/do_not.mp3",
-    }
+    file_path = "data/channels/rockerboo/rockerboo.sounds.json"
+    file = File.read!(file_path)
+
+    sound_list = Poison.decode!(file)
+
+    IO.inspect sound_list
 
     children = [
       :poolboy.child_spec(pool_name(), poolboy_config, sound_list)

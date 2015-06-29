@@ -41,7 +41,10 @@ Currently runs in iex
 
 	iex -S mix
 
-
 ## Process flow
 
 ![Process Flow](https://raw.githubusercontent.com/rockerBOO/elirc_twitch/master/flow.png)
+
+## Project Throughput
+
+[![Throughput Graph](https://graphs.waffle.io/rockerboo/elirc_twitch/throughput.svg)](https://waffle.io/rockerboo/elirc_twitch/metrics)
