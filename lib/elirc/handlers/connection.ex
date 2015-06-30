@@ -3,9 +3,9 @@ defmodule Elirc.Handler.Connection do
     defstruct host: "irc.twitch.tv",
               port: 6667,
               pass: "",
-              nick: Application.get_env(:twitch, :username),
-              user: Application.get_env(:twitch, :username),
-              name: Application.get_env(:twitch, :username),
+              nick: System.get_env("TWITCH_USERNAME"),
+              user: System.get_env("TWITCH_USERNAME"),
+              name: System.get_env("TWITCH_USERNAME"),
               debug?: true,
               client: nil
   end
@@ -23,7 +23,7 @@ defmodule Elirc.Handler.Connection do
   def handle_info({:connected, server, port}, state) do
     debug "Connected to #{server}:#{port}"
 
-    pass = Application.get_env(:twitch, :access_token)
+    pass = System.get_env("TWITCH_ACCESS_TOKEN")
 
     debug "Logging into #{state.nick}"
 

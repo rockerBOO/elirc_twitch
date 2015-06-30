@@ -16,7 +16,7 @@ defmodule Elirc do
 
     IO.puts "Fetching and importing emoticons..."
 
-    GenServer.cast(emoticon_pid, "fetch_and_import")
+    # GenServer.cast(emoticon_pid, "fetch_and_import")
 
     {:ok, client} = ExIrc.Client.start_link([])
 

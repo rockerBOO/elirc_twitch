@@ -137,7 +137,7 @@ defmodule Elirc.Message.Parser do
   Elirc.MessagePool.Worker.process_message_for_data("danBad danBat")
   """
   def find_data(message, channel, user, [client, token]) do
-    emotes = Emoticon.get_all!()
+    # emotes = Emoticon.get_all!()
     words = ["danThink", "deIlluminati", "danBat"]
 
     String.lstrip(message)
