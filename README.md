@@ -16,7 +16,7 @@ Create a `.env` (ex: [.env.example](https://github.com/rockerBOO/elirc_twitch/bl
 * `TWITCH_ACCESS_TOKEN`
 * `TWITCH_USERNAME`
 
-To get [your a Twitch Access Token](http://twitchapps.com/tmi/).
+To get [your a Twitch Chat Key](http://twitchapps.com/tmi/).
 
 *NOTE* The chat key only is scoped for "chat_login" and won't work with [RestTwitch](http://github.com/rockerboo/rest_twitch) intergration without "user_read" scope. I have created the [rockerBOO/elirc_twitch_oauth_web](https://github.com/rockerBOO/elirc_twitch_oauth_web) project to allow you to get a scoped OAuth.
 
