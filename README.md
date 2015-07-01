@@ -26,7 +26,7 @@ To get [your a Twitch Access Token](http://twitchapps.com/tmi/).
 * `TWITCH_CLIENT_SECRET`
 * `TWITCH_REDIRECT_URI`
 
-The run `source .env` in your shell before compiling your project.
+Then **run `source .env`** in your shell before compiling your project.
 
 ## Usage
 
