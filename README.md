@@ -3,37 +3,30 @@ Elirc
 
 ![Build Status](https://travis-ci.org/rockerBOO/elirc_twitch.svg?branch=master)
 
-Elirc is a Twitch Chat Bot that is an experimental
+Elirc is a Twitch Chat Bot that strives for complete failure control, and the ability to handle any amount of messages coming in.
 
 In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
 
-
 ## Configuration
 
-You will need to set the following configuration variables in your
-`config/config.exs` file:
+You will need to set the following environmental variables.
 
-```elixir
-use Mix.Config
+Create a `.env` (ex: [.env.example](https://github.com/rockerBOO/elirc_twitch/blob/master/.env.example)) file in your project with the following content:
 
-config :twitch, access_token: System.get_env("TWITCH_ACCESS_TOKEN"),
-                   username:  System.get_env("TWITCH_USERNAME")
-```
+* `TWITCH_ACCESS_TOKEN`
+* `TWITCH_USERNAME`
 
-Set the twitch access token to the environment variables. To get [your Twitch chat key](http://twitchapps.com/tmi/). The chat key only is scoped for "chat_login" and won't work with [RestTwitch](http://github.com/rockerboo/rest_twitch) intergration without "user_read" scope.
+To get [your a Twitch Access Token](http://twitchapps.com/tmi/).
 
-For security, I recommend that you use environment variables rather than hard
-coding your account credentials. If you don't already have an environment
-variable manager, you can create a `.env` file in your project with the
-following content:
+*NOTE* The chat key only is scoped for "chat_login" and won't work with [RestTwitch](http://github.com/rockerboo/rest_twitch) intergration without "user_read" scope. I have created the [rockerBOO/elirc_twitch_oauth_web](https://github.com/rockerBOO/elirc_twitch_oauth_web) project to allow you to get a scoped OAuth.
 
-```bash
-export TWITCH_ACCESS_TOKEN=dybd4z...
-export TWITCH_USERNAME=your_username
-```
+### RestTwitch Requirement
 
-Then, just be sure to run `source .env` in your shell before compiling your
-project.
+* `TWITCH_CLIENT_ID`
+* `TWITCH_CLIENT_SECRET`
+* `TWITCH_REDIRECT_URI`
+
+The run `source .env` in your shell before compiling your project.
 
 ## Usage
 
