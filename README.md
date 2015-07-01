@@ -1,6 +1,8 @@
 Elirc
 =====
 
+[![Join the chat at https://gitter.im/rockerBOO/elirc_twitch](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rockerBOO/elirc_twitch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![Build Status](https://travis-ci.org/rockerBOO/elirc_twitch.svg?branch=master)
 
 Elirc is a Twitch Chat Bot that strives for complete failure control, and the ability to handle any amount of messages coming in.
