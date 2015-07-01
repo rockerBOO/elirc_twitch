@@ -3,9 +3,9 @@ defmodule Elirc.Handler.Whisper do
     defstruct host: "irc.twitch.tv",
               port: 6667,
               pass: "",
-              nick: Application.get_env(:twitch, :username),
-              user: Application.get_env(:twitch, :username),
-              name: Application.get_env(:twitch, :username),
+              nick: System.get_env("TWITCH_USERNAME"),
+              user: System.get_env("TWITCH_USERNAME"),
+              name: System.get_env("TWITCH_USERNAME"),
               channel: "",
               debug?: true,
               client: nil
@@ -28,9 +28,11 @@ defmodule Elirc.Handler.Whisper do
   def handle_info({:connected, server, port}, state) do
     debug "(w) Connected to #{server}:#{port}"
 
-    pass = Application.get_env(:twitch, :access_token)
+    pass = System.get_env("TWITCH_ACCESS_TOKEN")
 
     debug "(w) Logging into #{state.nick}"
+
+    IO.inspect state
 
     # Login to Twitch IRC
     ExIrc.Client.logon state.client, "oauth:" <> pass, state.nick,

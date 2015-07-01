@@ -9,155 +9,84 @@ defmodule Elirc.Command do
   alias Elirc.Emoticon
 
   @doc """
-
-  ## Examples
-  start_link(ExIrc.Client, "TWITCH_ACCESS_TOKEN", "#test_channel")
-  """
-	def start_link(client, token, channel) do
-    GenServer.start_link(__MODULE__, [client, token, channel], [])
-	end
-
-  def init([client, token, channel]) do
-    {:ok, %{client: client, token: token, channel: channel}}
-  end
-
-  @doc """
   Runs the command on the CommandPool
 
   ## Example
   run("follower", "#test_channel")
   """
-  def run(cmd, channel) do
+  def run(cmd, channel, user) do
     pool_name = Elirc.CommandPool.Supervisor.pool_name()
+
+    # debug "Running #{cmd} on #{channel}"
 
     :poolboy.transaction(
       pool_name,
       fn(pid) ->
-        :gen_server.call(pid, {:run, [cmd: cmd, channel: channel]})
+        try do
+          :gen_server.call(pid, {:run, {cmd, channel, user}})
+        catch
+          :exit, {:timeout, _} -> {:error, :timeout}
+        end
       end
     )
   end
 
+  def split_response([action | value]), do: {action, hd(value)}
+  def split_response(_), do: {"", nil}
+
   def route(nil, _, _, _), do: :ok
 
-  def route({action, value}, channel, user, [client, token]) do
+  def route(cmd, channel, user, config) do
+    # debug "Routing for #{cmd} in #{channel}"
+
+    {action, value} = process(cmd, channel, user, config)
+      |> split_response()
+
     case action do
-      :reply -> Message.whisper(user, value)
-      :say -> Message.say(value, channel, [client, token])
-      :sound -> Sound.play(value)
-      :cmd -> cmd(value, channel, [client, token])
+      "reply" -> Message.whisper(value, user, config)
+      "say" -> Message.say(value, channel, config)
+      "sound" -> Sound.play(value)
+      "cmd" -> exec(value, channel, user, config)
       _ -> :ok
     end
   end
 
-  @doc """
-  Process and route command to action
-
-  ## Examples
-  cmd("follower", "#test_channel", [ExIrc.Client, "TWITCH_ACCESS_TOKEN"])
-  """
-  def cmd(cmd, channel, [client, token]) do
-    case String.split(cmd) do
-      ["follower"] -> Message.say(get_last_follower(), channel, [client, token])
-      ["followed"] -> Message.say(get_last_followed(token), channel, [client, token])
-      ["song"] -> Message.say(get_last_track(), channel, [client, token])
-      ["emote" | emote] -> Message.say(emote(emote), channel, [client, token])
-      _ -> IO.inspect cmd
-    end
+  def exec(command, channel, user, config) do
+    Elirc.Extension.command(command, channel, user, config)
   end
 
-  @doc """
-  Process emote details from the emoticon list
-
-  ## Example
-  emote("danBad")
-  """
-  def emote(emote) do
-    IO.inspect emote
-
-    Elirc.Emoticon.get_emote(emote)
-      |> Elirc.Emoticon.get_emoticon_details()
-      |> Poison.encode!()
-  end
-
-  @doc """
-  Gets the last follower to the channel
-
-  ## Examples
-  Elirc.Command.get_last_follower()
-  """
-  def get_last_follower() do
-    opts = [direction: "desc", limit: 1]
-  %Follow{user: user} =
-      Channels.followers("rockerboo", opts)
-      |> Enum.fetch! 0
-
-    user
-      |> Map.fetch! "display_name"
-  end
-
-  @doc """
-  Gets the last followed channel
-
-  ## Example
-  get_last_followed("TWITCH_ACCESS_TOKEN")
-  """
-  def get_last_followed(token) do
-    %{"display_name" => display_name} =
-      Users.streams_following(token, [limit: 1])
-      # |> Map.fetch!("streams")
-      |> Enum.fetch!(0)
-      |> Map.fetch!(:channel)
-
-    display_name
-  end
-
-  @doc """
-  Get the last track played on last.fm
-
-  ## Example
-  get_last_track()
-  """
-  def get_last_track() do
-    url = "http://ws.audioscrobbler.com/1.0/user/rockerboo/recenttracks.rss"
-    case HTTPoison.get(url) do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        Exml.parse(body) |> Exml.get "//item[1]/title"
-      {:ok, response} ->
-        IO.inspect response
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect reason
-    end
+  def process(command, channel, user, config) do
+    parse(command, config.commands, config.aliases)
   end
 
   @doc """
   Route to alias to true command
 
   ## Example
-      iex> Elirc.Command._alias(["bot"])
-      ["elirc"]
+      iex> Elirc.Command._alias("bot", %{"bot" => "elirc"})
+      "elirc"
   """
-  def _alias(cmd_alias) do
-    case cmd_alias do
-      ["bealight"] -> ["bealright"]
-      ["bot"] -> ["elirc"]
-      ["glacier"] -> ["theme"]
-      ["xfile"] -> ["xfiles"]
-      ["x-file"] -> ["xfiles"]
-      ["x-files"] -> ["xfiles"]
-      ["h"] -> ["help"]
-      ["coming"] -> ["getsmeeverytime"]
-      ["wtf"] -> ["talkingabout"]
-      ["beatit"] -> ["beat_it"]
-      ["comands"] -> ["commands"]
-      ["donot"] -> ["do_not"]
-      ["waithere"] -> ["waitthere"]
-      ["63"] -> ["speedlimit"]
-      ["65"] -> ["speedlimit"]
-      ["danThink"] -> ["dont"]
-      ["cmd"] -> ["commands"]
-      ["cmdlist"] -> ["commands"]
-      cmd -> cmd
+  def _alias(command, aliases) do
+    case fetch_alias(command, aliases) do
+      "" -> command
+      value -> value
+    end
+  end
+
+  def fetch_alias(command, aliases) do
+    fetch(command, aliases)
+  end
+
+  def fetch_command(command, commands) do
+    fetch(command, commands)
+  end
+
+  def fetch(key, map) do
+    # debug "Fetching #{key}"
+
+    case Map.fetch(map, key) do
+      {:ok, value} -> value
+      :error -> ""
     end
   end
 
@@ -165,60 +94,21 @@ defmodule Elirc.Command do
   Parses a command for the command routing
 
   ## Examples
-      iex> Elirc.Command.parse("hello")
-      {:say, "Hello"}
+      iex> Elirc.Command.parse("hello", %{"hello" => ["say", "Hello"]}, %{})
+      ["say", "Hello"]
 
-      iex> Elirc.Command.parse("engage")
-      {:sound, "engage"}
+      iex> Elirc.Command.parse("engage", %{"engage" => ["sound", "engage"]}, %{})
+      ["sound", "engage"]
 
-      iex> Elirc.Command.parse("follower")
-      {:cmd, "follower"}
+      iex> Elirc.Command.parse("follower", %{"follower" => ["cmd", "follower"]}, %{})
+      ["cmd", "follower"]
   """
-  def parse(command) do
-    case String.split(command) |> _alias() do
-      ["hello"] -> {:say, "Hello"}
-      ["help"] -> {:say, "You need help."}
-      ["engage"] -> {:sound, "engage"}
-      ["dont"] -> {:sound, "dont"}
-      ["speedlimit"] -> {:sound, "speedlimit"}
-      ["yeahsure"] -> {:sound, "yeahsure"}
-      ["xfiles"] -> {:sound, "xfiles"}
-      ["wedidit"] -> {:sound, "wedidit"}
-      ["toy"] -> {:sound, "toy"}
-      ["waitthere"] -> {:sound, "waitthere"}
-      ["bealright"] -> {:sound, "bealright"}
-      ["injuriesemotional"] -> {:sound, "injuriesemotional"}
-      ["getsmeeverytime"] -> {:sound, "getsmeeverytime"}
-      ["talkingabout"] -> {:sound, "talkingabout"}
-      ["beat_it"] -> {:sound, "beat_it"}
-      ["whatsthat"] -> {:sound, "whatsthat"}
-      ["stupid"] -> {:sound, "stupid"}
-      ["yadda"] -> {:sound, "yadda"}
-      ["batman"] -> {:sound, "batman"}
-      ["gigawatts"] -> {:sound, "gigawatts"}
-      ["cando90"] -> {:sound, "cando90"}
-      ["intothefuture"] -> {:sound, "intothefuture"}
-      ["yourmom"] -> {:sound, "yourmom"}
-      ["likeaglove"] -> {:sound, "likeaglove"}
-      ["loser"] -> {:sound, "loser"}
-      ["do_not"] -> {:sound, "do_not"}
-      ["follower"] -> {:cmd, "follower"}
-      ["followed"] -> {:cmd, "followed"}
-      ["elixir"] -> {:say, "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"}
-      ["elirc"] -> {:say, "https://github.com/rockerBOO/elirc_twitch"}
-      ["soundlist"] -> {:say, "!(injuriesemotional, getsmeeverytime, talkingabout, beat_it, stupid, yadda, engage, dont, speedlimit, yeahsure, xfiles, wedidit, toy, waitthere, bealright, whatsthat, injuriesemotional, getsmeeverytime, talkingabout,m awkward, beat_it, stupid, yadda, gigawatts, cando90, intothefuture, yourmom, likeaglove, loser, do_not)"}
-      ["whatamidoing"] -> {:say, "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."}
-      ["itsnotaboutsyntax"] -> {:say, "http://devintorr.es/blog/2013/06/11/elixir-its-not-about-syntax/"}
-      ["excitement"] -> {:say, "http://devintorr.es/blog/2013/01/22/the-excitement-of-elixir/"}
-      ["commands"] -> {:say, "!(hello, elixir, theme, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement, song, flip)"}
-      ["twitchapi"] -> {:say, "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"}
-      ["resttwitch"] -> {:say, "https://github.com/rockerBOO/rest_twitch"}
-      ["theme"] -> {:say, "http://glaciertheme.com/"}
-      ["flip"] -> {:say , "(╯°□°）╯︵┻━┻"}
-      ["song"] -> {:cmd, "song"}
-      ["emote" | emote] -> {:cmd, Enum.join(["emote" | emote], " ")}
-      _ -> nil
-    end
+  def parse(command, commands, aliases \\ %{}) do
+    # IO.puts "Parsing command #{command}"
+
+    _alias(command, aliases)
+      |> fetch_command(commands)
+      # |> IO.inspect
   end
 
   defp debug(msg) do

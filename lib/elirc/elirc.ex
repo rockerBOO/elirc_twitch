@@ -16,7 +16,7 @@ defmodule Elirc do
 
     IO.puts "Fetching and importing emoticons..."
 
-    GenServer.cast(emoticon_pid, "fetch_and_import")
+    # GenServer.cast(emoticon_pid, "fetch_and_import")
 
     {:ok, client} = ExIrc.Client.start_link([])
 
@@ -45,8 +45,10 @@ defmodule Elirc do
       worker(Elirc.Handler.Names, [client]),
       worker(Elirc.Handler.Whisper, [whisper_client, whisper_server]),
 
-      # Supervisors
+      # Channels Supervisor
       worker(Elirc.Channel.Supervisor, [client]),
+
+      # Message Supervisors
       worker(Elirc.MessageQueue.Supervisor, [client, token]),
       worker(Elirc.MessagePool.Supervisor, [client, token]),
       worker(Elirc.CommandPool.Supervisor, [client, token]),

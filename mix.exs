@@ -3,7 +3,7 @@ defmodule Elirc.Mixfile do
 
   def project do
     [app: :elirc,
-     version: "0.7.3",
+     version: "0.8.0",
      elixir: "~> 1.0",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -25,7 +25,8 @@ defmodule Elirc.Mixfile do
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},
       # {:exirc, path: "/home/rockerboo/code/exirc_rockerboo"},
-      {:rest_twitch, github: "rockerboo/rest_twitch"},
+      # {:rest_twitch, git: "git@github.com:rockerBOO/rest_twitch.git"},
+      {:rest_twitch, github: "rockerBOO/rest_twitch"},
       # {:rest_twitch, path: "/home/rockerboo/projects/rest_twitch"},
       {:exml, github: "expelledboy/exml"},
       {:timex, "~> 0.12.9"},

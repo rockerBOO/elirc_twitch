@@ -3,6 +3,14 @@ defmodule Elirc.CommandPool.Supervisor do
     GenServer.start_link(__MODULE__, [client, token])
   end
 
+  def get_commands_from_sounds(sounds) do
+    Map.keys(sounds)
+      |> Enum.map(fn (sound) ->
+          {sound, ["sound", sound]}
+        end)
+      |> Enum.into(%{})
+  end
+
   def init([client, token]) do
 	    poolboy_config = [
 	      {:name, {:local, pool_name()}},
@@ -11,8 +19,23 @@ defmodule Elirc.CommandPool.Supervisor do
 	      {:max_overflow, 0}
 	    ]
 
+      sounds = "data/channels/rockerboo/rockerboo.sounds.json"
+        |> File.read!()
+        |> Poison.decode!()
+
+      commands = "data/channels/rockerboo/rockerboo.commands.json"
+        |> File.read!()
+        |> Poison.decode!()
+        |> Map.merge(get_commands_from_sounds(sounds))
+
+
+
+      aliases = "data/channels/rockerboo/rockerboo.alias.json"
+        |> File.read!()
+        |> Poison.decode!()
+
 	    children = [
-	      :poolboy.child_spec(pool_name(), poolboy_config, [client, token])
+	      :poolboy.child_spec(pool_name(), poolboy_config, [client, token, commands, aliases])
 	    ]
 
 	    options = [

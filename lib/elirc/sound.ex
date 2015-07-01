@@ -21,7 +21,7 @@ defmodule Elirc.Sound do
   play("xfiles", %{xfiles: "/home/rockerboo/Music/movie_clips/xfiles.mp3"}})
   """
   def play(sound, sounds) do
-    Map.get(sounds, String.to_atom(sound))
+    Map.get(sounds, sound)
       |> play_file()
   end
 
@@ -50,7 +50,8 @@ defmodule Elirc.Sound do
   """
   def play_mp3(file) do
     debug "Playing " <> file
-    Porcelain.exec("mpg123", ["-q", file])
+    # Porcelain.exec("mpg123", ["-q", file])
+    result = Porcelain.exec("mpg123", ["-q", file])
   end
 
   @doc """
@@ -69,8 +70,6 @@ defmodule Elirc.Sound do
   def parse_extension(file) do
     String.slice(file, String.length(file)-3, 3)
   end
-
-
 
   defp debug(msg) do
     IO.puts IO.ANSI.yellow() <> msg <> IO.ANSI.reset()

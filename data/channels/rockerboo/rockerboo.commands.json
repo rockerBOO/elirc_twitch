@@ -1,0 +1,18 @@
+{
+	"hello": ["say", "Hello"],
+	"help": ["say", "You need help"],
+    "follower": ["cmd", "follower"],
+    "followed": ["cmd", "followed"],
+	"elixir": ["say", "Elixir is a dynamic, functional language designed for building scalable and maintainable applications. http://elixir-lang.org/"],
+	"elirc": ["say", "https://github.com/rockerBOO/elirc_twitch"],
+	"soundlist": ["say", "!(injuriesemotional, getsmeeverytime, talkingabout, beat_it, stupid, yadda, engage, dont, speedlimit, yeahsure, xfiles, wedidit, toy, waitthere, bealright, whatsthat, injuriesemotional, getsmeeverytime, talkingabout,m awkward, beat_it, stupid, yadda, gigawatts, cando90, intothefuture, yourmom, likeaglove, loser, do_not)"],
+	"whatamidoing": ["say", "Working on a Twitch Bot in Elixir. Elixir works well with co-currency and messages. This is ideal for IRC chat processing."],
+	"itsnotaboutsyntax": ["say", "http://devintorr.es/blog/2013/06/11/elixir-its-not-about-syntax/"],
+	"excitement": ["say", "http://devintorr.es/blog/2013/01/22/the-excitement-of-elixir/"],
+	"commands": ["say", "!(hello, elixir, theme, resttwitch, bot, soundlist, whatamidoing, itsnotaboutsyntax, excitement, song, flip)"],
+	"twitchapi": ["say", "https://github.com/justintv/Twitch-API/blob/master/v3_resources/"],
+	"resttwitch": ["say", "https://github.com/rockerBOO/rest_twitch"],
+	"theme": ["say", "http://glaciertheme.com/"],
+	"flip": ["say", "(╯°□°）╯︵┻━┻"],
+	"song": ["cmd", "song"]
+}

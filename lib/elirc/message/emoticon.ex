@@ -360,6 +360,8 @@ defmodule Elirc.Emoticon do
   Processes metrics for all emotes on all channels
   """
   def process_metrics() do
+    true
+
     Elirc.Emoticon.get_all!()
       |> Enum.each(fn (emote) ->
           emoticon = get_emote(emote)
