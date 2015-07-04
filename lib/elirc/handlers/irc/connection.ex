@@ -10,6 +10,10 @@ defmodule Elirc.Handler.Connection do
               client: nil
   end
 
+  defmodule Error do
+    defexception reason: ""
+  end
+
   def start_link(client, state \\ %State{}) do
     GenServer.start_link(__MODULE__, [%{state | client: client}])
   end
@@ -18,6 +22,12 @@ defmodule Elirc.Handler.Connection do
     ExIrc.Client.add_handler state.client, self
     ExIrc.Client.connect! state.client, state.host, state.port
     {:ok, state}
+  end
+
+  def handle_info({:connected, server, port}, %State{client: nil}, state) do
+    raise %Error{reason: "No client found in the handler"}
+
+    {:noreply, state}
   end
 
   def handle_info({:connected, server, port}, state) do

@@ -32,7 +32,7 @@ defmodule Elirc.MessagePool.Worker do
   end
 
   def terminate(reason, state) do
-    IO.inspect reason
+    # IO.inspect reason
     :ok
   end
 end

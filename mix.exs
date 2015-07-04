@@ -11,7 +11,7 @@ defmodule Elirc.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :exirc, :quantum, :porcelain, :beaker],
+    [applications: [:logger, :exirc, :quantum, :porcelain, :beaker, :web_socket],
      mod: {Elirc.App, []}]
   end
 
@@ -21,6 +21,7 @@ defmodule Elirc.Mixfile do
       {:quantum, ">= 1.2.4"},
       {:beaker, "~> 0.0.3"},
       {:porcelain, "~> 2.0"},
+      {:web_socket, github: "slogsdon/plug-web-socket"},
       {:poolboy, github: "devinus/poolboy"},
       # {:exirc, "~> 0.9.1"},
       {:exirc, github: "bitwalker/exirc"},

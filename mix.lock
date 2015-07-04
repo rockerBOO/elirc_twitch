@@ -13,7 +13,7 @@
   "meck": {:git, "git://github.com/eproxus/meck.git", "dde759050eff19a1a80fd854d7375174b191665d", [ref: "0.8.2"]},
   "oauth2": {:hex, :oauth2, "0.1.1"},
   "parse_trans": {:git, "git://github.com/uwiger/parse_trans.git", "763462825e4ce4660d43e6511078489ea50cdeca", [ref: "2.8"]},
-  "plug": {:hex, :plug, "0.13.0"},
+  "plug": {:hex, :plug, "0.12.2"},
   "poison": {:hex, :poison, "1.4.0"},
   "poolboy": {:git, "git://github.com/devinus/poolboy.git", "3bb48a893ff5598f7c73731ac17545206d259fac", []},
   "porcelain": {:hex, :porcelain, "2.0.0"},
@@ -22,4 +22,5 @@
   "rest_twitch": {:git, "git://github.com/rockerBOO/rest_twitch.git", "5f432001112c2434afa327f19f0bb24928880046", []},
   "socket": {:hex, :socket, "0.2.8"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
-  "timex": {:hex, :timex, "0.12.9"}}
+  "timex": {:hex, :timex, "0.12.9"},
+  "web_socket": {:git, "git://github.com/slogsdon/plug-web-socket.git", "ee39850fdab5e471e76349cb9109e42541336277", []}}

@@ -60,7 +60,7 @@ defmodule Elirc.Channel do
   Removes user from channel
   """
   def handle_call({:remove, user}, _from, state) do
-    debug "Removing #{user} from #{state.channel}"
+    # debug "Removing #{user} from #{state.channel}"
 
     Elirc.Extension.parted(user, state.channel)
 
@@ -71,7 +71,7 @@ defmodule Elirc.Channel do
   Removes user from channel, asyncly
   """
   def handle_cast({:remove, user}, state) do
-    debug "Removing #{user} from #{state.channel}"
+    # debug "Removing #{user} from #{state.channel}"
 
     Elirc.Extension.parted(user, state.channel)
 
@@ -82,7 +82,7 @@ defmodule Elirc.Channel do
   Add user to channel
   """
   def handle_call({:add, user}, _from, state) do
-    debug "Adding #{user} to #{state.channel}"
+    # debug "Adding #{user} to #{state.channel}"
 
     Elirc.Extension.joined(user, state.channel)
 
@@ -93,7 +93,7 @@ defmodule Elirc.Channel do
   Add user to channel, asyncly
   """
   def handle_cast({:add, user}, state) do
-    debug "Adding #{user} to #{state.channel}"
+    # debug "Adding #{user} to #{state.channel}"
 
     Elirc.Extension.joined(user, state.channel)
 
