@@ -7,7 +7,7 @@ Elirc
 
 Elirc is a Twitch Chat Bot that strives for complete failure control, and the ability to handle any amount of messages coming in.
 
-In VERY heavy development. Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
+Pre-alpha. Risks must be explored at owns peril. Adventure awaits...
 
 ## Configuration
 
